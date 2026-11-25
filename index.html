@@ -972,7 +972,7 @@ function goHome(){if(!S.stars.length)return openOnboard();if(sess&&!sess.done&&!
 let sess=null,cur=null,retry=null,lastTopic=null;
 function startSession(mode,topic){
  if(mode==='audition'){TOPICS.forEach(t=>{S.skills[t.id].lvl=5});}
- sess={mode,topic,total:mode==='audition'?TOPICS.length*2:mode==='tour'?10:8,i:0,log:[],streak:0,seen:{},queue:mode==='audition'?shuffle(TOPICS.map(t=>t.id)).concat(shuffle(TOPICS.map(t=>t.id))):[],xp0:S.xp,lv0:Object.fromEntries(TOPICS.map(t=>[t.id,S.skills[t.id].lvl])),newCards:[],done:false};
+ sess={mode,topic,total:mode==='audition'?TOPICS.length*2:mode==='tour'?10:8,i:0,log:[],streak:0,seen:{},queue:mode==='audition'?shuffle(TOPICS.map(t=>t.id)).concat(shuffle(TOPICS.map(t=>t.id))):[],xp0:S.xp,lv0:Object.fromEntries(TOPICS.map(t=>[t.id,S.skills[t.id].lvl])),newCards:[],done:false,t0:Date.now()};
  retry=null;lastTopic=null;show('quiz');next()}
 function pickTopic(){
  if(sess.mode==='audition')return sess.queue[sess.i];
@@ -1035,7 +1035,7 @@ function answer(i){const q=cur;if(!q||q.answered)return;q.answered=true;const c=
    <div class="center mt"><button class="btn" id="nextBtn" onclick="advance()">${last?'See my results 🏆':'Got it! Next track ▶'}</button></div></div>`;
  setTimeout(()=>$('#fb').scrollIntoView({behavior:'smooth',block:'nearest'}),150)}
 function advance(){if(cur&&cur.entry&&cur.t1){cur.entry.sec+=Math.round(Math.min(120,(Date.now()-cur.t1)/1000));cur.t1=null;save()}sess.i++;next()}
-function quitSession(){if(confirm('Leave this set? Your progress so far is saved.')){sess=null;goHome()}}
+function quitSession(){if(confirm('Leave this set? Your progress so far is saved.')){if(sess&&sess.log.length>=3)mailSession(sess,false);sess=null;goHome()}}
 document.addEventListener('keydown',e=>{if($('#s-quiz').classList.contains('hidden')||!cur||e.target.tagName==='INPUT')return;
  const k=e.key.toLowerCase(),m={a:0,b:1,c:2,d:3,'1':0,'2':1,'3':2,'4':3};
  if(!cur.answered&&k in m&&m[k]<cur.choices.length)answer(m[k]);else if(cur.answered&&(k==='enter'||k===' ')){e.preventDefault();advance()}});
@@ -1044,6 +1044,7 @@ function finish(){sess.done=true;S.sessions++;if(sess.mode==='audition')S.placed
  const today=new Date().toDateString(),y=new Date(Date.now()-864e5).toDateString();
  if(S.lastDay!==today){S.days=S.lastDay===y?S.days+1:1;S.lastDay=today}
  S.history.push({d:Date.now(),l:+overall().toFixed(2),m:sess.mode,n:sess.total,ok:sess.log.filter(x=>x.ok).length,lv:Object.fromEntries(TOPICS.map(t=>[t.id,+S.skills[t.id].lvl.toFixed(2)]))});S.history=S.history.slice(-1500);
+ mailSession(sess,true);
  const okRate=sess.log.filter(x=>x.ok).length/sess.total,vid=(sess.mode==='audition'||okRate>=.7)?unlockVideo():null;save();
  const okN=sess.log.filter(x=>x.ok).length,xp=S.xp-sess.xp0,ov=overall(),isA=sess.mode==='audition';
  const touched=[...new Set(sess.log.map(x=>x.t))];
@@ -1155,7 +1156,7 @@ function reportText(r){const v=verdictOf(r),T=TP[r.fo],strip=x=>String(x).replac
  `${strip(v.h)}\n${strip(v.p)}\n\n`+
  `Usage: ${r.active} active day${r.active===1?'':'s'}, ${r.sets} set${r.sets===1?'':'s'}, ${r.N} questions, ${Math.round(r.secs/60)} minutes. ${pctS(r.OK,r.N)} correct.\n`+
  `Overall level: ${r.lvNow.toFixed(1)} of 10 (${gradeOf(r.lvNow)}).\n\n`+
- `Class focus, ${T.name}: level ${r.fNow.toFixed(1)} (${gradeOf(r.fNow)}). Working on: ${T.skills[Math.floor(r.fNow)-1]}.\n${strip(focusVerdict(r))}\n\n`+
+ `Class focus, ${T.name}: level ${r.fNow.toFixed(1)} (${gradeOf(r.fNow)}). Working on: "${T.skills[Math.floor(r.fNow)-1]}".\n${strip(focusVerdict(r))}\n\n`+
  `Learning from mistakes: after an explanation she got the follow-up right ${r.remOk} of ${r.rem} times.\n\n`+
  `By topic:\n`+r.topics.map(x=>`- ${x.t.name}: Lv ${x.now.toFixed(1)} (${gradeOf(x.now)})${x.chg!=null&&Math.abs(x.chg)>=.05?`, ${x.chg>0?'+':''}${x.chg.toFixed(1)}`:''}, ${x.n} questions, ${pctS(x.ok,x.n)} right`).join('\n')}
 function shareReport(){const t=reportText(reportData(rrDays));
@@ -1208,9 +1209,47 @@ function openReport(days){if(days!==undefined)rrDays=days;const r=reportData(rrD
   ${[...r.topics].sort((a,b)=>(b.t.id===r.fo)-(a.t.id===r.fo)||a.now-b.now).map(x=>`<tr class="${x.t.id===r.fo?'foc':''}"><td>${x.t.emoji} ${x.t.name}</td><td>${x.now.toFixed(1)} <span class="mut">${gradeOf(x.now)}</span></td><td style="color:${x.chg>0.04?'var(--ok)':x.chg<-0.04?'var(--bad)':'var(--mut)'}">${x.chg==null||Math.abs(x.chg)<.05?'•':(x.chg>0?'▲ ':'▼ ')+Math.abs(x.chg).toFixed(1)}</td><td>${x.n}</td><td>${pctS(x.ok,x.n)}</td><td>${pctS(x.h,x.n)}</td></tr>`).join('')}</table></div>
   <p class="mut mt" style="font-weight:700;font-size:13px">Lv 1-2 ≈ Grade 5 · 3-4 ≈ Grade 6 · 5-7 ≈ Grade 7 · 8-10 ≈ Grade 8. Everyone starts at Lv 5 (7th grade) and the Audition adjusts from there.</p></div>
  ${om.length?`<div class="panel mt"><h2 class="fd" style="font-size:22px">🔍 Other recent mistakes</h2>${om.map(m=>`<div class="mistake">${TP[m.t]?.emoji||''} <b>${TP[m.t]?.name||''}</b> · picked ${pretty(m.you)}, answer ${pretty(m.ans)}${m.why?`<br><span class="mut">${pretty(m.why)}</span>`:''}</div>`).join('')}</div>`:''}
+ ${mailPanel()}
  <div class="panel mt"><h2 class="fd" style="font-size:20px">ℹ️ How to read this</h2><p class="mut" style="font-weight:700;line-height:1.6;margin-top:6px">The app keeps adjusting the difficulty so Maya gets roughly 2 out of 3 questions right. So "percent correct" stays fairly steady even while she improves. The <b style="color:#fff">level</b> and the <b style="color:#fff">difficulty of the questions she answers</b> are the real signs of progress. All of this is stored only on this device.</p></div>
  <div class="center mt2 row" style="justify-content:center"><button class="btn" onclick="shareReport()">📤 Send report</button><button class="btn ghost" onclick="emailReport()">✉️ Email</button><button class="btn ghost" onclick="goHome()">🏠 Home</button></div>`;
  show('report')}
+
+/* ----- email reports (Web3Forms relay; the key is kept only on this device) ----- */
+const MAILK='mmMayasMath.mail';
+let MAIL;try{MAIL=Object.assign({key:'',on:true,queue:[]},JSON.parse(localStorage.getItem(MAILK)||'null')||{})}catch(e){MAIL={key:'',on:true,queue:[]}}
+const saveMail=()=>{try{localStorage.setItem(MAILK,JSON.stringify(MAIL))}catch(e){}};
+const APP_URL='https://agentbonham.github.io/mayas-math/';
+const modeName=m=>m==='audition'?'Audition (placement quiz)':m==='tour'?'World Tour (mixed practice)':'Practice Room';
+const plain=x=>String(x).replace(/<[^>]+>/g,'').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
+function mailSession(se,done){if(!MAIL.key||!MAIL.on)return;
+ const n=se.log.length,ok=se.log.filter(x=>x.ok).length,secs=S.log.filter(e=>e.d>=se.t0).reduce((a,e)=>a+(e.sec||0),0);
+ const mins=Math.max(1,Math.round(secs/60)),topic=se.mode==='practice'&&TP[se.topic]?` · ${TP[se.topic].name}`:'',when=new Date().toLocaleString(undefined,{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+ const touched=[...new Set(se.log.map(x=>x.t))];
+ const lines=se.log.map((x,i)=>`${i+1}. ${x.ok?'✅':'❌'} ${TP[x.t].name} (Lv ${x.L})`).join('\n');
+ const miss=se.log.filter(x=>!x.ok).map(x=>`• ${plain(x.q).slice(0,160)}\n  She picked ${plain(x.you)}, the answer is ${plain(x.ans)}.${x.why?`\n  Why: ${plain(x.why)}`:''}`).join('\n\n');
+ const lv=touched.map(id=>{const a=se.lv0[id],b=S.skills[id].lvl,d=b-a;return `• ${TP[id].name}: ${a.toFixed(1)} → ${b.toFixed(1)} (${gradeOf(b)})${Math.abs(d)>=.05?(d>0?' ▲':' ▼'):''}`}).join('\n');
+ const subject=`Maya ${done?'finished':'stopped'} a math set: ${ok}/${n} right (${Math.round(ok/n*100)}%)`;
+ const msg=`${modeName(se.mode)}${topic}\n${when} · about ${mins} min${done?'':` · stopped after ${n} of ${se.total} questions`}\n\nRESULT: ${ok} of ${n} right\n${lines}\n\nLEVEL CHANGES\n${lv}\n`+
+  (miss?`\nMISTAKES AND WHAT WENT WRONG\n${miss}\n`:'\nNo mistakes this set! ✨\n')+
+  `\n────────────\n${reportText(reportData(30))}\n\nFull report: ${APP_URL}#parent (open it on Maya's device)`;
+ MAIL.queue.push({subject,message:msg,d:Date.now()});MAIL.queue=MAIL.queue.slice(-20);saveMail();flushMail()}
+let mailBusy=false;
+async function flushMail(){if(mailBusy||!MAIL.key||!MAIL.queue.length||!navigator.onLine)return;mailBusy=true;
+ try{while(MAIL.queue.length){const m=MAIL.queue[0];
+  const r=await fetch('https://api.web3forms.com/submit',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({access_key:MAIL.key,subject:m.subject,from_name:"M&M Maya's Math",message:m.message})});
+  const j=await r.json().catch(()=>({}));if(!r.ok||j.success===false){MAIL.lastErr=j.message||('HTTP '+r.status);saveMail();break}
+  MAIL.queue.shift();MAIL.lastOk=Date.now();MAIL.lastErr='';saveMail()}}catch(e){MAIL.lastErr='offline';saveMail()}finally{mailBusy=false}}
+addEventListener('online',flushMail);
+function setMailKey(k){k=String(k||'').trim();if(k&&!/^[0-9a-f-]{36}$/i.test(k)){toast('That key does not look right. It looks like xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx');return false}MAIL.key=k;MAIL.on=true;saveMail();return true}
+async function testMail(){if(!MAIL.key){toast('Add the access key first');return}
+ MAIL.queue.push({subject:"Test from M&M Maya's Math ✅",message:`Email reports are working. You'll get an email each time Maya finishes a set.\n\n${reportText(reportData(30))}`,d:Date.now()});saveMail();
+ toast('Sending test email...');await flushMail();toast(MAIL.queue.length?`⚠️ Not sent: ${esc(MAIL.lastErr||'unknown error')}`:'📧 Test email sent! Check your inbox (and spam).',4000);openReport()}
+function mailPanel(){return `<div class="panel mt"><h2 class="fd" style="font-size:22px">📧 Email me after every set</h2>
+ ${MAIL.key?`<p style="font-weight:700;margin-top:6px">Status: <b style="color:${MAIL.on?'var(--ok)':'var(--mut)'}">${MAIL.on?'On':'Paused'}</b>${MAIL.lastOk?` · last email sent ${fmtD(MAIL.lastOk)}`:''}${MAIL.queue.length?` · <span style="color:var(--gold)">${MAIL.queue.length} waiting to send${MAIL.lastErr?` (${esc(MAIL.lastErr)})`:''}</span>`:''}</p>
+  <div class="row mt" style="gap:8px"><button class="btn small" onclick="testMail()">Send a test email</button><button class="btn small ghost" onclick="MAIL.on=!MAIL.on;saveMail();openReport()">${MAIL.on?'Pause emails':'Turn emails back on'}</button><button class="btn small ghost" onclick="if(confirm('Remove the email key from this device?')){MAIL.key='';MAIL.queue=[];saveMail();openReport()}">Remove</button></div>`
+ :`<p class="mut" style="font-weight:700;margin-top:6px;line-height:1.55">Get a free access key at web3forms.com (enter your email, the key arrives by email), then paste it here.</p>
+  <div class="row mt" style="gap:8px"><input id="mailKey" class="sel" style="flex:1;min-width:220px" placeholder="Paste access key" autocomplete="off"><button class="btn small" onclick="if(setMailKey($('#mailKey').value))testMail()">Save & test</button></div>`}
+ <p class="mut" style="font-weight:700;font-size:13px;margin-top:8px">Each email has the set's score, every mistake with the explanation, level changes, and a 30-day summary. The key is saved only on this device.</p></div>`}
 
 /* ----- settings ----- */
 function openSettings(){$('#modalRoot').innerHTML=`<div class="modal" onclick="if(event.target===this)this.remove()"><div class="panel">
@@ -1225,6 +1264,8 @@ function openSettings(){$('#modalRoot').innerHTML=`<div class="modal" onclick="i
 
 /* ----- boot ----- */
 applyTheme();
+{const m=location.hash.match(/^#mailkey=([0-9a-f-]{36})$/i);if(m&&setMailKey(m[1])){history.replaceState(null,'',location.pathname);toast('📧 Email reports are on for this device!',4000);location.hash='parent'}}
+flushMail();
 if(location.hash==='#parent')openReport();else if(!S.stars.length)openOnboard();else goHome();
 </script>
 </body>
