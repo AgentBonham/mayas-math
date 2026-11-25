@@ -1219,18 +1219,20 @@ function openReport(days){if(days!==undefined)rrDays=days;const r=reportData(rrD
 /* ----- email reports (Web3Forms relay; the key is kept only on this device) ----- */
 const MAILK='mmMayasMath.mail';
 let MAIL;try{MAIL=Object.assign({key:'',on:true,queue:[]},JSON.parse(localStorage.getItem(MAILK)||'null')||{})}catch(e){MAIL={key:'',on:true,queue:[]}}
+const MAIL_KEY_BUILTIN='d8eedd87-b393-41ec-85b5-06a67063492b';
+if(!MAIL.key&&MAIL_KEY_BUILTIN&&!MAIL.removed)MAIL.key=MAIL_KEY_BUILTIN;
 const saveMail=()=>{try{localStorage.setItem(MAILK,JSON.stringify(MAIL))}catch(e){}};
 const APP_URL='https://agentbonham.github.io/mayas-math/';
 const modeName=m=>m==='audition'?'Audition (placement quiz)':m==='tour'?'World Tour (mixed practice)':'Practice Room';
 const plain=x=>String(x).replace(/<[^>]+>/g,'').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
-function mailSession(se,done){if(!MAIL.key||!MAIL.on)return;
+function mailSession(se,done){if(!MAIL.key||!MAIL.on||se.mailedAt===se.log.length)return;se.mailedAt=se.log.length;
  const n=se.log.length,ok=se.log.filter(x=>x.ok).length,secs=S.log.filter(e=>e.d>=se.t0).reduce((a,e)=>a+(e.sec||0),0);
  const mins=Math.max(1,Math.round(secs/60)),topic=se.mode==='practice'&&TP[se.topic]?` · ${TP[se.topic].name}`:'',when=new Date().toLocaleString(undefined,{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
  const touched=[...new Set(se.log.map(x=>x.t))];
  const lines=se.log.map((x,i)=>`${i+1}. ${x.ok?'✅':'❌'} ${TP[x.t].name} (Lv ${x.L})`).join('\n');
  const miss=se.log.filter(x=>!x.ok).map(x=>`• ${plain(x.q).slice(0,160)}\n  She picked ${plain(x.you)}, the answer is ${plain(x.ans)}.${x.why?`\n  Why: ${plain(x.why)}`:''}`).join('\n\n');
  const lv=touched.map(id=>{const a=se.lv0[id],b=S.skills[id].lvl,d=b-a;return `• ${TP[id].name}: ${a.toFixed(1)} → ${b.toFixed(1)} (${gradeOf(b)})${Math.abs(d)>=.05?(d>0?' ▲':' ▼'):''}`}).join('\n');
- const subject=`Maya ${done?'finished':'stopped'} a math set: ${ok}/${n} right (${Math.round(ok/n*100)}%)`;
+ const subject=`Maya ${done?'finished':'left'} a math set: ${ok}/${n} right (${Math.round(ok/n*100)}%)`;
  const msg=`${modeName(se.mode)}${topic}\n${when} · about ${mins} min${done?'':` · stopped after ${n} of ${se.total} questions`}\n\nRESULT: ${ok} of ${n} right\n${lines}\n\nLEVEL CHANGES\n${lv}\n`+
   (miss?`\nMISTAKES AND WHAT WENT WRONG\n${miss}\n`:'\nNo mistakes this set! ✨\n')+
   `\n────────────\n${reportText(reportData(30))}\n\nFull report: ${APP_URL}#parent (open it on Maya's device)`;
@@ -1238,17 +1240,19 @@ function mailSession(se,done){if(!MAIL.key||!MAIL.on)return;
 let mailBusy=false;
 async function flushMail(){if(mailBusy||!MAIL.key||!MAIL.queue.length||!navigator.onLine)return;mailBusy=true;
  try{while(MAIL.queue.length){const m=MAIL.queue[0];
-  const r=await fetch('https://api.web3forms.com/submit',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({access_key:MAIL.key,subject:m.subject,from_name:"M&M Maya's Math",message:m.message})});
+  const r=await fetch('https://api.web3forms.com/submit',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({access_key:MAIL.key,subject:m.subject,from_name:"M&M Maya's Math",message:m.message})});
   const j=await r.json().catch(()=>({}));if(!r.ok||j.success===false){MAIL.lastErr=j.message||('HTTP '+r.status);saveMail();break}
   MAIL.queue.shift();MAIL.lastOk=Date.now();MAIL.lastErr='';saveMail()}}catch(e){MAIL.lastErr='offline';saveMail()}finally{mailBusy=false}}
 addEventListener('online',flushMail);
+// she closed or switched away mid-set: send what she did so far (the finished set still sends its own email)
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&sess&&!sess.done&&sess.log.length>=3)mailSession(sess,false)});
 function setMailKey(k){k=String(k||'').trim();if(k&&!/^[0-9a-f-]{36}$/i.test(k)){toast('That key does not look right. It looks like xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx');return false}MAIL.key=k;MAIL.on=true;saveMail();return true}
 async function testMail(){if(!MAIL.key){toast('Add the access key first');return}
  MAIL.queue.push({subject:"Test from M&M Maya's Math ✅",message:`Email reports are working. You'll get an email each time Maya finishes a set.\n\n${reportText(reportData(30))}`,d:Date.now()});saveMail();
  toast('Sending test email...');await flushMail();toast(MAIL.queue.length?`⚠️ Not sent: ${esc(MAIL.lastErr||'unknown error')}`:'📧 Test email sent! Check your inbox (and spam).',4000);openReport()}
 function mailPanel(){return `<div class="panel mt"><h2 class="fd" style="font-size:22px">📧 Email me after every set</h2>
  ${MAIL.key?`<p style="font-weight:700;margin-top:6px">Status: <b style="color:${MAIL.on?'var(--ok)':'var(--mut)'}">${MAIL.on?'On':'Paused'}</b>${MAIL.lastOk?` · last email sent ${fmtD(MAIL.lastOk)}`:''}${MAIL.queue.length?` · <span style="color:var(--gold)">${MAIL.queue.length} waiting to send${MAIL.lastErr?` (${esc(MAIL.lastErr)})`:''}</span>`:''}</p>
-  <div class="row mt" style="gap:8px"><button class="btn small" onclick="testMail()">Send a test email</button><button class="btn small ghost" onclick="MAIL.on=!MAIL.on;saveMail();openReport()">${MAIL.on?'Pause emails':'Turn emails back on'}</button><button class="btn small ghost" onclick="if(confirm('Remove the email key from this device?')){MAIL.key='';MAIL.queue=[];saveMail();openReport()}">Remove</button></div>`
+  <div class="row mt" style="gap:8px"><button class="btn small" onclick="testMail()">Send a test email</button><button class="btn small ghost" onclick="MAIL.on=!MAIL.on;saveMail();openReport()">${MAIL.on?'Pause emails':'Turn emails back on'}</button><button class="btn small ghost" onclick="if(confirm('Remove the email key from this device?')){MAIL.key='';MAIL.removed=1;MAIL.queue=[];saveMail();openReport()}">Remove</button></div>`
  :`<p class="mut" style="font-weight:700;margin-top:6px;line-height:1.55">Get a free access key at web3forms.com (enter your email, the key arrives by email), then paste it here.</p>
   <div class="row mt" style="gap:8px"><input id="mailKey" class="sel" style="flex:1;min-width:220px" placeholder="Paste access key" autocomplete="off"><button class="btn small" onclick="if(setMailKey($('#mailKey').value))testMail()">Save & test</button></div>`}
  <p class="mut" style="font-weight:700;font-size:13px;margin-top:8px">Each email has the set's score, every mistake with the explanation, level changes, and a 30-day summary. The key is saved only on this device.</p></div>`}
