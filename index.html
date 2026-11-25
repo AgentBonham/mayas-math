@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M&amp;M · Maya's Math ✨</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--a:#ff4fa3;--a2:#a855f7;--bg:#0f0620;--card:rgba(255,255,255,.07);--line:rgba(255,255,255,.14);--txt:#fff;--mut:#cdbdf0;--ok:#2ee6a0;--bad:#ff6b81;--gold:#ffd36e}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{font-family:Nunito,system-ui,sans-serif;color:var(--txt);background:var(--bg);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.fd{font-family:Fredoka,Nunito,sans-serif;letter-spacing:.2px}
+button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
+.hidden{display:none!important}
+
+/* ---------- stage background ---------- */
+.bg{position:fixed;inset:0;z-index:-3;background:
+ radial-gradient(circle at 15% 8%,color-mix(in srgb,var(--a) 38%,transparent),transparent 42%),
+ radial-gradient(circle at 85% 25%,color-mix(in srgb,var(--a2) 40%,transparent),transparent 46%),
+ radial-gradient(ellipse at 50% 110%,#3a1580,transparent 60%),var(--bg)}
+.spot{position:fixed;top:-25vh;width:38vw;height:150vh;z-index:-2;filter:blur(28px);transform-origin:50% 0;
+ clip-path:polygon(46% 0,54% 0,100% 100%,0 100%);animation:sway 10s ease-in-out infinite alternate;opacity:.7}
+.spot.s1{left:2vw;background:linear-gradient(180deg,color-mix(in srgb,var(--a) 30%,transparent),transparent 70%)}
+.spot.s2{right:2vw;background:linear-gradient(180deg,color-mix(in srgb,var(--a2) 30%,transparent),transparent 70%);animation-delay:-5s}
+@keyframes sway{from{transform:rotate(-20deg)}to{transform:rotate(20deg)}}
+.notes{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.notes span{position:absolute;bottom:-40px;font-size:22px;opacity:.0;animation:floatUp linear infinite;color:var(--a)}
+@keyframes floatUp{0%{transform:translateY(0) rotate(0);opacity:0}10%{opacity:.55}90%{opacity:.3}100%{transform:translateY(-110vh) rotate(40deg);opacity:0}}
+
+.app{max-width:980px;margin:0 auto;padding:16px 16px 70px}
+
+/* ---------- header ---------- */
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;border-radius:22px;background:rgba(20,8,45,.55);backdrop-filter:blur(12px);border:1px solid var(--line);position:sticky;top:10px;z-index:20}
+.logo{display:flex;align-items:center;gap:10px;font-family:Fredoka;font-weight:700;font-size:21px;cursor:pointer}
+.grad{background:linear-gradient(90deg,var(--a),var(--a2),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.eq{display:flex;gap:3px;align-items:flex-end;height:22px}
+.eq i{width:4px;border-radius:3px;background:linear-gradient(var(--a),var(--a2));animation:eq 1s ease-in-out infinite}
+.eq i:nth-child(2){animation-delay:-.3s}.eq i:nth-child(3){animation-delay:-.6s}.eq i:nth-child(4){animation-delay:-.15s}
+@keyframes eq{0%,100%{height:25%}50%{height:100%}}
+.hstats{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid var(--line);font-weight:800;font-size:14px;white-space:nowrap}
+.iconbtn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid var(--line);font-size:18px;display:grid;place-items:center}
+.iconbtn:hover{background:rgba(255,255,255,.16)}
+
+/* ---------- generic ---------- */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:26px;padding:24px;backdrop-filter:blur(10px)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 26px;border-radius:999px;font-weight:900;font-size:17px;
+ background:linear-gradient(135deg,var(--a),var(--a2));box-shadow:0 8px 30px color-mix(in srgb,var(--a) 45%,transparent),inset 0 1px 0 rgba(255,255,255,.35);transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 12px 40px color-mix(in srgb,var(--a) 60%,transparent)}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:rgba(255,255,255,.08);border:1px solid var(--line);box-shadow:none}
+.btn.small{padding:9px 16px;font-size:14px}
+.btn:disabled{opacity:.4;pointer-events:none}
+.mut{color:var(--mut)}
+.center{text-align:center}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.mt{margin-top:18px}.mt2{margin-top:28px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;font-weight:800;font-size:13px;background:color-mix(in srgb,var(--c,#a855f7) 25%,transparent);border:1px solid color-mix(in srgb,var(--c,#a855f7) 60%,transparent)}
+.chip.hot{--c:#ff8a3d}.chip.remix{--c:#38bdf8}
+section{animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ---------- onboarding ---------- */
+.hero{text-align:center;padding:30px 10px 10px}
+.hero h1{font-size:clamp(34px,6vw,58px);line-height:1.05;font-weight:700}
+.hero p{font-size:18px;margin-top:12px}
+.mic{font-size:64px;display:inline-block;animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-10px) rotate(6deg)}}
+.field{width:100%;padding:14px 18px;border-radius:16px;background:rgba(255,255,255,.08);border:2px solid var(--line);color:#fff;font:inherit;font-size:18px;font-weight:700;outline:none}
+.field:focus{border-color:var(--a)}
+.label{font-family:Fredoka;font-size:19px;font-weight:600;margin:22px 0 10px}
+.artists{display:flex;flex-wrap:wrap;gap:8px}
+.art{padding:9px 15px;border-radius:999px;background:rgba(255,255,255,.07);border:2px solid var(--line);font-weight:800;transition:.15s}
+.art:hover{border-color:var(--a)}
+.art.on{background:linear-gradient(135deg,var(--a),var(--a2));border-color:transparent;box-shadow:0 4px 18px color-mix(in srgb,var(--a) 50%,transparent)}
+.sticks{display:flex;gap:14px;flex-wrap:wrap}
+.stick{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 12px;border-radius:18px;border:2px solid transparent;font-weight:800;font-size:13px}
+.stick.on{border-color:#fff;background:rgba(255,255,255,.08)}
+.stick .orb{width:38px;height:38px;border-radius:50%;background:var(--sc);box-shadow:0 0 22px var(--sc),0 0 6px #fff inset}
+.stick .rod{width:8px;height:26px;border-radius:4px;background:linear-gradient(#ddd,#777);margin-top:-6px}
+
+/* ---------- home ---------- */
+.welcome{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-top:18px}
+.rankcard{position:relative;overflow:hidden}
+.rankcard h2{font-size:30px}
+.rankbadge{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:14px;background:linear-gradient(135deg,var(--gold),#ff9d5c);color:#2a1300;font-weight:900;margin-top:10px}
+.bar{height:14px;border-radius:999px;background:rgba(255,255,255,.1);overflow:hidden;position:relative}
+.bar>b{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--a),var(--a2),var(--gold));transition:width .8s cubic-bezier(.2,.9,.2,1)}
+.stats3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{padding:14px;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid var(--line);text-align:center}
+.stat .n{font-family:Fredoka;font-size:26px;font-weight:700}
+.stat .l{font-size:12px;color:var(--mut);font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:16px}
+.tile{position:relative;text-align:left;padding:24px;border-radius:26px;border:1px solid var(--line);overflow:hidden;min-height:160px;transition:transform .2s,box-shadow .2s;background:var(--tbg)}
+.tile:hover{transform:translateY(-4px) rotate(-.4deg);box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.tile .em{font-size:44px;display:block;margin-bottom:10px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.3))}
+.tile h3{font-size:24px}
+.tile p{color:rgba(255,255,255,.85);margin-top:4px;font-weight:600}
+.tile .big{position:absolute;right:-10px;bottom:-24px;font-size:120px;opacity:.13;transform:rotate(-12deg)}
+.focus{display:flex;align-items:center;gap:14px;margin-top:16px;padding:16px 20px;border-radius:20px;background:linear-gradient(90deg,color-mix(in srgb,var(--a) 25%,transparent),transparent);border:1px solid color-mix(in srgb,var(--a) 50%,transparent)}
+.audition{text-align:center;padding:40px 24px;margin-top:18px;background:linear-gradient(160deg,color-mix(in srgb,var(--a) 30%,transparent),color-mix(in srgb,var(--a2) 25%,transparent));}
+.audition h2{font-size:clamp(28px,5vw,42px)}
+
+/* ---------- quiz ---------- */
+.qhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:18px;flex-wrap:wrap}
+.setlist{display:flex;gap:6px;flex-wrap:wrap}
+.setlist i{width:22px;height:8px;border-radius:5px;background:rgba(255,255,255,.15)}
+.setlist i.ok{background:var(--ok);box-shadow:0 0 10px var(--ok)}
+.setlist i.no{background:var(--bad)}
+.setlist i.now{background:#fff;animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.4}}
+.power{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px}
+.power .cells{display:flex;gap:3px}
+.power .cells i{width:12px;height:18px;border-radius:4px;background:rgba(255,255,255,.12)}
+.power .cells i.on{background:var(--a);box-shadow:0 0 10px var(--a)}
+.qcard{margin-top:14px;position:relative}
+.qtop{display:flex;gap:8px;flex-wrap:wrap}
+.qtext{font-size:clamp(20px,2.6vw,26px);font-weight:700;line-height:1.5;margin:18px 0 22px}
+.qtext b{color:var(--gold)}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.choice{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:20px;background:rgba(255,255,255,.07);border:2px solid var(--line);font-size:21px;font-weight:800;text-align:left;transition:transform .15s,border-color .15s,background .15s;min-height:68px}
+.choice:hover:not(:disabled){border-color:var(--a);transform:translateY(-2px);background:rgba(255,255,255,.11)}
+.choice .let{flex:0 0 36px;height:36px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--a),var(--a2));font-family:Fredoka;font-size:17px}
+.choice.right{background:rgba(46,230,160,.18);border-color:var(--ok);animation:pop .4s}
+.choice.right .let{background:var(--ok);color:#00341f}
+.choice.wrong{background:rgba(255,107,129,.18);border-color:var(--bad);animation:shake .4s}
+.choice.wrong .let{background:var(--bad)}
+.choice.dim{opacity:.45}
+@keyframes pop{50%{transform:scale(1.04)}}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.qtools{display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:10px;flex-wrap:wrap}
+.hint{margin-top:12px;padding:14px 18px;border-radius:16px;background:rgba(255,211,110,.12);border:1px dashed var(--gold);font-weight:700}
+.fb{margin-top:18px;border-radius:22px;padding:20px 22px;animation:fadeIn .35s}
+.fb.good{background:linear-gradient(135deg,rgba(46,230,160,.2),rgba(46,230,160,.05));border:1px solid rgba(46,230,160,.6)}
+.fb.oops{background:linear-gradient(135deg,rgba(255,107,129,.16),rgba(168,85,247,.12));border:1px solid rgba(255,107,129,.55)}
+.fb h3{font-size:26px}
+.fb .xp{display:inline-block;margin-left:8px;padding:4px 12px;border-radius:999px;background:var(--gold);color:#2a1300;font-weight:900;font-size:15px;vertical-align:middle;animation:pop .5s}
+.why{margin-top:14px;padding:14px 16px;border-radius:16px;background:rgba(0,0,0,.22);border-left:5px solid var(--bad);font-weight:700;line-height:1.5}
+.why.blue{border-left-color:#38bdf8}
+.why .t{font-family:Fredoka;font-size:15px;text-transform:uppercase;letter-spacing:1px;color:var(--mut);margin-bottom:4px}
+.steps{margin-top:14px;padding:14px 16px 14px 18px;border-radius:16px;background:rgba(0,0,0,.22);border-left:5px solid var(--ok)}
+.steps ol{margin-left:20px;line-height:1.7;font-weight:700}
+.steps li{padding:2px 0}
+.tip{margin-top:14px;padding:12px 16px;border-radius:16px;background:rgba(255,211,110,.12);font-weight:800}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.05;font-size:.82em;margin:0 .12em}
+.fr>span:first-child{border-bottom:2px solid currentColor;padding:0 .18em 1px}
+.fr>span:last-child{padding-top:1px}
+
+/* ---------- progress ---------- */
+.topicrow{display:grid;grid-template-columns:200px 1fr 120px;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.topicrow:last-child{border-bottom:none}
+.tname{font-weight:900;font-size:16px;display:flex;gap:8px;align-items:center}
+.lvbar{position:relative;height:18px;border-radius:999px;background:rgba(255,255,255,.08)}
+.lvbar>b{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:linear-gradient(90deg,var(--tc),color-mix(in srgb,var(--tc) 60%,#fff));box-shadow:0 0 14px color-mix(in srgb,var(--tc) 60%,transparent);transition:width 1s}
+.lvbar .mk{position:absolute;top:-4px;bottom:-4px;width:2px;background:rgba(255,255,255,.35)}
+.lvbar .mkl{position:absolute;top:22px;font-size:10px;color:var(--mut);font-weight:800;transform:translateX(-50%);white-space:nowrap}
+.tnow{font-size:13px;color:var(--mut);font-weight:700;margin-top:6px}
+.tstat{text-align:right;font-weight:900}
+.tstat small{display:block;color:var(--mut);font-weight:700;font-size:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.mistake{padding:12px 14px;border-radius:14px;background:rgba(0,0,0,.2);margin-top:10px;font-size:14px;font-weight:600;line-height:1.5}
+.mistake b{color:var(--gold)}
+.pathstep{display:flex;gap:12px;align-items:flex-start;padding:12px 0}
+.pathstep .num{flex:0 0 34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:900;background:linear-gradient(135deg,var(--a),var(--a2))}
+
+/* ---------- practice ---------- */
+.topics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+.tbtn{padding:20px 14px;border-radius:22px;background:color-mix(in srgb,var(--tc) 18%,rgba(255,255,255,.04));border:2px solid color-mix(in srgb,var(--tc) 50%,transparent);text-align:center;transition:.2s}
+.tbtn:hover{transform:translateY(-3px);background:color-mix(in srgb,var(--tc) 30%,transparent)}
+.tbtn .em{font-size:38px}
+.tbtn h4{font-family:Fredoka;font-size:17px;margin-top:6px}
+.tbtn small{color:var(--mut);font-weight:800}
+
+/* ---------- photocards ---------- */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-top:16px}
+.pc{position:relative;aspect-ratio:2/3;border-radius:18px;overflow:hidden;padding:12px;display:flex;flex-direction:column;justify-content:space-between;background:var(--pg);border:3px solid rgba(255,255,255,.8);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.pc .pe{font-size:64px;text-align:center;filter:drop-shadow(0 6px 12px rgba(0,0,0,.3));margin-top:14px}
+.pc .pn{font-family:Fredoka;font-weight:700;font-size:18px;line-height:1.1;text-shadow:0 2px 8px rgba(0,0,0,.4)}
+.pc .pt{font-size:12px;font-weight:800;opacity:.9}
+.pc .rar{position:absolute;top:8px;right:8px;font-size:11px;font-weight:900;padding:3px 8px;border-radius:999px;background:rgba(0,0,0,.35)}
+.pc.rare::after,.pc.legend::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 20%,rgba(255,255,255,.55) 45%,rgba(120,255,255,.3) 50%,transparent 70%);background-size:250% 250%;animation:holo 3s linear infinite;mix-blend-mode:overlay;pointer-events:none}
+.pc.legend{border-color:var(--gold);box-shadow:0 0 30px rgba(255,211,110,.7)}
+@keyframes holo{from{background-position:120% 0}to{background-position:-120% 0}}
+.pc.locked{background:rgba(255,255,255,.05);border:3px dashed var(--line);box-shadow:none;align-items:center;justify-content:center;color:var(--mut);font-weight:800}
+
+/* ---------- modal / toast ---------- */
+.modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:rgba(8,2,20,.75);backdrop-filter:blur(6px);padding:16px;animation:fadeIn .25s}
+.modal .panel{max-width:560px;width:100%;max-height:90vh;overflow:auto;background:rgba(30,12,60,.95)}
+.reveal{width:200px;margin:16px auto;perspective:900px}
+.reveal .pc{animation:flipIn 1s cubic-bezier(.2,.9,.2,1.2)}
+@keyframes flipIn{from{transform:rotateY(180deg) scale(.6);opacity:0}to{transform:none;opacity:1}}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:60;padding:14px 22px;border-radius:18px;background:linear-gradient(135deg,var(--a),var(--a2));font-weight:900;box-shadow:0 10px 40px rgba(0,0,0,.4);animation:toastIn .4s cubic-bezier(.2,.9,.2,1.3)}
+@keyframes toastIn{from{transform:translate(-50%,40px);opacity:0}}
+canvas#fx{position:fixed;inset:0;pointer-events:none;z-index:70}
+.toggle{display:flex;justify-content:space-between;align-items:center;padding:12px 0;font-weight:800}
+
+/* ---------- videos ---------- */
+.vthumb{position:relative;display:block;width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000 center/cover no-repeat;border:2px solid var(--line);cursor:pointer}
+.vthumb::after{content:"▶";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-size:26px;background:linear-gradient(135deg,var(--a),var(--a2));box-shadow:0 6px 24px rgba(0,0,0,.5);padding-left:4px}
+.vthumb:hover{border-color:var(--a)}
+.vframe{width:100%;aspect-ratio:16/9;border:0;border-radius:16px;background:#000}
+.lesson{display:flex;gap:14px;align-items:center;margin-top:14px;padding:12px;border-radius:16px;background:rgba(0,0,0,.22);border-left:5px solid #ffd36e;cursor:pointer;text-align:left;width:100%}
+.lesson:hover{background:rgba(255,255,255,.08)}
+.lesson .lt{flex:0 0 130px;aspect-ratio:16/9;border-radius:10px;background:#000 center/cover;position:relative}
+.lesson .lt::after{content:"▶";position:absolute;inset:0;display:grid;place-items:center;font-size:22px;text-shadow:0 2px 8px #000}
+.vids{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;margin-top:16px}
+.vcard{border-radius:18px;overflow:hidden;background:rgba(255,255,255,.06);border:1px solid var(--line)}
+.vcard .vthumb{border-radius:0;border:0}
+.vcard .vi{padding:10px 14px;font-weight:800}
+.vcard .vi small{display:block;color:var(--mut);font-weight:700}
+.vcard.locked .vthumb{filter:blur(6px) grayscale(.8) brightness(.5);cursor:default}
+.vcard.locked .vthumb::after{content:"🔒";background:rgba(0,0,0,.6)}
+.modal .panel.wide{max-width:860px}
+@media (max-width:720px){
+ .welcome,.grid2{grid-template-columns:1fr}
+ .tiles{grid-template-columns:1fr}
+ .topics{grid-template-columns:repeat(2,1fr)}
+ .topicrow{grid-template-columns:1fr;gap:8px}
+ .tstat{text-align:left}
+ .hstats .pill.opt{display:none}
+}
+@media (max-width:560px){.choices{grid-template-columns:1fr}.logo span.t{display:none}}
+/* ---------- proportional tables & graphs ---------- */
+.ptab{border-collapse:separate;border-spacing:0;margin:14px auto 16px;font-size:clamp(17px,2.2vw,21px);border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+.ptab th{background:rgba(255,255,255,.1);padding:8px 14px;text-align:left;font-size:.78em;color:var(--mut)}
+.ptab td{padding:8px 18px;text-align:center;border-left:1px solid var(--line);min-width:56px}
+.ptab tr+tr th,.ptab tr+tr td{border-top:1px solid var(--line)}
+.qtext .qm{color:var(--a);font-size:1.2em}
+.pgraph{display:block;width:min(100%,360px);margin:12px auto;background:rgba(0,0,0,.2);border-radius:16px}
+/* ---------- parent report ---------- */
+.rgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:640px){.rgrid{grid-template-columns:repeat(2,1fr)}}
+.rstat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 8px;text-align:center}
+.rstat .n{font-family:Fredoka;font-size:28px;font-weight:700}
+.rstat .l{font-size:12px;color:var(--mut);font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.verdict{border-radius:18px;padding:16px 18px;font-weight:700;line-height:1.55;font-size:17px}
+.verdict.up{background:rgba(46,230,160,.12);border:1px solid rgba(46,230,160,.5)}
+.verdict.flat{background:rgba(255,211,110,.1);border:1px solid rgba(255,211,110,.45)}
+.verdict.down{background:rgba(255,107,129,.1);border:1px solid rgba(255,107,129,.45)}
+.verdict.none{background:var(--card);border:1px solid var(--line)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;max-width:420px}
+.cal i{aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-style:normal;font-weight:800;color:rgba(255,255,255,.7)}
+.rtable{width:100%;border-collapse:collapse;font-size:14px}
+.rtable th{text-align:left;color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:6px 4px;border-bottom:1px solid var(--line)}
+.rtable td{padding:9px 4px;border-bottom:1px solid rgba(255,255,255,.07);font-weight:700}
+.rtable tr.foc td{background:rgba(255,255,255,.05)}
+.skl{display:flex;gap:10px;align-items:center;padding:6px 0;font-weight:700;border-bottom:1px solid rgba(255,255,255,.06)}
+.skl small{margin-left:auto;color:var(--mut)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.seg button{padding:7px 14px;font-weight:800;font-size:14px}
+.seg button.on{background:var(--a);color:#fff}
+.sel{background:rgba(255,255,255,.08);color:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 10px;font:inherit;font-weight:800}
+.sel option{color:#000}
+.sig{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.sig .e{font-size:24px;line-height:1}
+.sig b{color:#fff}
+</style>
+</head>
+<body>
+<div class="bg"></div><div class="spot s1"></div><div class="spot s2"></div>
+<div class="notes" id="notes"></div>
+<canvas id="fx"></canvas>
+
+<div class="app">
+ <header class="top">
+  <div class="logo" onclick="goHome()">
+   <div class="eq"><i></i><i></i><i></i><i></i></div>
+   <span class="t"><span class="grad" id="appTitle">M&amp;M · Maya's Math</span></span>
+  </div>
+  <div class="hstats" id="hstats"></div>
+ </header>
+
+ <!-- ONBOARDING -->
+ <section id="s-onboard" class="hidden">
+  <div class="hero">
+   <div class="mic">🎤</div>
+   <h1 class="grad">Hey Maya! 💜<br>Welcome to M&amp;M</h1>
+   <p class="mut">Maya's Math, your own stage. Every star started as a trainee. Let's find your level, then level you up, one track at a time. 🌟</p>
+  </div>
+  <div class="panel mt2">
+   <div class="label" style="margin-top:0">Pick your favorite artists 💜 <span class="mut" style="font-size:14px">(they'll show up in your questions!)</span></div>
+   <div class="mut" style="font-weight:800;font-size:13px;margin-bottom:8px">K-POP</div>
+   <div class="artists" id="kpop"></div>
+   <div class="mut" style="font-weight:800;font-size:13px;margin:14px 0 8px">POP</div>
+   <div class="artists" id="pop"></div>
+   <div class="row mt">
+    <input class="field" id="customArt" maxlength="24" placeholder="Someone else? Type a name…" style="flex:1;min-width:200px">
+    <button class="btn ghost small" onclick="addCustom()">+ Add</button>
+   </div>
+   <div class="artists mt" id="custom"></div>
+   <div class="label">Choose your lightstick color ✨</div>
+   <div class="sticks" id="sticks"></div>
+   <div class="center mt2"><button class="btn" id="obGo" onclick="finishOnboard()">Start my Audition 🎤</button></div>
+  </div>
+ </section>
+
+ <!-- HOME -->
+ <section id="s-home" class="hidden"></section>
+
+ <!-- QUIZ -->
+ <section id="s-quiz" class="hidden">
+  <div class="qhead">
+   <div class="row" style="gap:10px">
+    <button class="iconbtn" title="Leave" onclick="quitSession()">✕</button>
+    <div>
+     <div class="fd" style="font-weight:700;font-size:18px" id="qmode"></div>
+     <div class="setlist" id="setlist"></div>
+    </div>
+   </div>
+   <div class="power"><span>Lightstick power</span><div class="cells" id="cells"></div></div>
+  </div>
+  <div class="panel qcard" id="qcard"></div>
+ </section>
+
+ <!-- RESULTS -->
+ <section id="s-results" class="hidden"></section>
+ <!-- PROGRESS -->
+ <section id="s-progress" class="hidden"></section>
+ <!-- PRACTICE -->
+ <section id="s-practice" class="hidden"></section>
+ <!-- CARDS -->
+ <section id="s-cards" class="hidden"></section>
+ <!-- VIDEOS -->
+ <section id="s-videos" class="hidden"></section>
+ <section id="s-report" class="hidden"></section>
+</div>
+<div id="modalRoot"></div>
+
+<script>
+/* =========================================================
+   Helpers
+   ========================================================= */
+const $=s=>document.querySelector(s);
+const R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const P=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b]}return a||1};
+const lcm=(a,b)=>a*b/gcd(a,b);
+const r2=n=>Math.round(n*100)/100;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function num(n){n=r2(n);if(Object.is(n,-0))n=0;const s=String(Math.abs(n));return (n<0?'−':'')+s}
+function money(n){n=r2(n);return '$'+(Number.isInteger(n)?n:n.toFixed(2))}
+const pn=x=>x<0?`(${num(x)})`:num(x);              // parenthesize negatives
+const sgn=x=>x<0?'−':'+';
+function lin(a,b,v='x'){let s='';if(a!==0)s=a===1?v:a===-1?'−'+v:num(a)+v;
+ if(b!==0){if(s)s+=b>0?' + '+num(b):' − '+num(-b);else s=num(b)}return s||'0'}
+class Fr{constructor(n,d=1){if(d<0){n=-n;d=-d}const g=gcd(n,d);this.n=n/g;this.d=d/g}
+ add(o){return new Fr(this.n*o.d+o.n*this.d,this.d*o.d)}sub(o){return new Fr(this.n*o.d-o.n*this.d,this.d*o.d)}
+ mul(o){return new Fr(this.n*o.n,this.d*o.d)}div(o){return new Fr(this.n*o.d,this.d*o.n)}neg(){return new Fr(-this.n,this.d)}
+ get v(){return this.n/this.d}
+ toString(){return this.d===1?num(this.n):(this.n<0?'−':'')+Math.abs(this.n)+'/'+this.d}}
+const pretty=s=>String(s).replace(/(\d+)\/(\d+)/g,'<span class="fr"><span>$1</span><span>$2</span></span>');
+const med=l=>{const s=[...l].sort((a,b)=>a-b),m=s.length>>1;return s.length%2?s[m]:(s[m-1]+s[m])/2};
+
+/* =========================================================
+   Content: artists, contexts
+   ========================================================= */
+const KPOP=['KATSEYE','BTS','BLACKPINK','Stray Kids','TWICE','NewJeans','SEVENTEEN','aespa','ENHYPEN','LE SSERAFIM','IVE','ATEEZ','TXT','ILLIT','BABYMONSTER','ROSÉ','Jungkook'];
+const POP=['Freya Skye','Harry Styles','Taylor Swift','Olivia Rodrigo','Sabrina Carpenter','Billie Eilish','Ariana Grande','Dua Lipa','Chappell Roan','Doja Cat','Selena Gomez','Tate McRae'];
+const STICKS={pink:['#ff4fa3','#a855f7'],purple:['#a855f7','#6366f1'],mint:['#2ee6b6','#38bdf8'],blue:['#38bdf8','#6366f1'],gold:['#fbbf24','#ff4fa3'],red:['#ff4d5e','#ff9d5c']};
+const CITIES=['Seoul','Tokyo','London','Paris','Los Angeles','New York','Sydney','Toronto','Bangkok','Mexico City','Chicago','Busan'];
+const city=()=>P(CITIES);
+const ST=()=>P(S.stars.length?S.stars:['Freya Skye','Harry Styles','Taylor Swift','KATSEYE']);
+const CHEERS=[s=>`${s} would put that answer on the setlist! 🎶`,s=>`That's a chart-topping answer! 📈`,s=>`Encore! Encore! 👏`,s=>`${s} just added you to the fan-cam 📸`,s=>`Flawless choreography, every step on beat 💃`,s=>`Certified platinum brain 💿`,s=>`The crowd is screaming your name! 🗣️💜`,s=>`Main-character energy ✨`,s=>`You ate that 🔥`,s=>`${s} wants you on their next world tour 🌍`];
+const OOPS=['Almost! Let\'s fix it together 💜','Plot twist! Here\'s what happened 🎬','No stress, even idols rehearse 🎧','Close! Let\'s replay that track 🔁'];
+
+/* =========================================================
+   YouTube videos (IDs verified against official channels)
+   ========================================================= */
+const MUSIC=[
+ {id:'pbHaLvebMdA',a:'Freya Skye',t:"Gold's Gone"},{id:'H5v3kku4y6Q',a:'Harry Styles',t:'As It Was'},
+ {id:'nfWlot6h_JM',a:'Taylor Swift',t:'Shake It Off'},{id:'R2-yomhYAj4',a:'KATSEYE',t:'Gnarly'},
+ {id:'4XawEYg_Q6E',a:'Freya Skye',t:'Walk Over'},{id:'E07s5ZYygMg',a:'Harry Styles',t:'Watermelon Sugar'},
+ {id:'e-ORhEE9VVg',a:'Taylor Swift',t:'Blank Space'},{id:'CjnB56tSCQI',a:'KATSEYE',t:'Gabriela'},
+ {id:'QWP9swKl8p4',a:'Freya Skye',t:"Can't Fake It"},{id:'b1kbLwvqugk',a:'Taylor Swift',t:'Anti-Hero'},
+ {id:'YMywRjz5VEk',a:'Freya Skye',t:'Someone to Love'},{id:'Q8uMYJhK5BA',a:'Freya Skye',t:'Winter Dream'}];
+const V={neg:['NQSN00zL5gg','Adding and subtracting negative numbers'],mul:['d8lP5tR2R3Q','Multiplying and dividing negative numbers'],oo:['ClYdw4d4OmA','Introduction to order of operations'],ooe:['_jiI0AV8Vr4','Order of operations with exponents'],
+ fadd:['52ZlXsFJULI','Adding and subtracting fractions'],fmul:['CTKMK1ZGLuk','Multiplying two fractions'],fdivu:['f3ySpxX9oeM','Understanding division of fractions'],fdiv:['m-pRnFIeoNA','Dividing fractions example'],
+ rate:['qGTYSAeLTOE','Introduction to rates'],unit:['Zm0KaIw-35k','Solving a unit rates problem'],ratio:['HpdMJaKaXXc','Introduction to ratios'],
+ pct:['FaDtge_vkbg','Finding a percentage'],pctw:['d1oNF88SAgg','Percent word problems'],
+ eval:['aoXUWSwiDzE','Evaluating expressions with variables'],like:['P6_sK8hRWCA','How to combine like terms'],dist:['ewEorPD4kdA','The distributive property'],dist2:['V-5q6tKaRuM','Expanding expressions with the distributive property'],
+ eq2:['_y_Q3_B2Vh8','Solving two-step equations'],eq2b:['tuVd355R-OQ','Two-step equations: examples'],both:['CGS0vihzSlc','Variables on both sides'],ineq:['WQ3IOm7dS9E','One-step inequalities (flipping the sign)'],
+ ang:['BTnAlNSgNsY','Complementary and supplementary angles'],circ:['Rcb7ZUTOQ1I','Circumference of a circle'],area:['ZyOhRgnFmIY','Area of a circle'],vol:['CCysGY2cXUo','Volume of a rectangular prism'],pyth:['s9t7rNhaBp8','Introduction to the Pythagorean theorem'],
+ pint:['qYjiVWwefto','Introduction to proportional relationships'],ptab:['rzDQ_ZIpi84','Constant of proportionality from tables'],peq:['qcz1Cm_-l50','Equations of proportional relationships'],pgr:['C7CY4l99S7M','Identifying proportional relationships using graphs'],pkg:['n_UHN9t3cNg','Constant of proportionality from a graph'],pfr:['2DBBKArGfus','Determining rates with fractions'],pcmp:['txRmzpNHtYI','Interpreting and comparing proportional relationships'],
+ mean:['uhxtUt_-GyM','Mean, median and mode'],median:['n6xCyzOP900','Exploring the mean and median'],prob:['uzkc-qNVoOk','Probability explained'],comp:['xSc4oLA9e8o','Compound probability of independent events']};
+const LESSONS={prop:['ptab','ptab','ptab','ptab','ptab','peq','pint','pkg','pfr','pcmp'],int:['neg','neg','neg','mul','mul','mul','oo','oo','ooe','ooe'],frac:['fadd','fadd','fadd','fmul','fmul','fdivu','fdiv','fadd','fdiv','fdiv'],
+ ratio:['rate','rate','unit','unit','unit','ratio','ratio','unit','unit','unit'],pct:['pct','pct','pctw','pctw','pctw','pctw','pctw','pctw','pctw','pctw'],
+ expr:['eval','eval','like','like','dist','dist','dist','dist','dist2','dist2'],eq:['eq2','eq2','eq2','eq2','eq2','eq2b','eq2b','both','ineq','ineq'],
+ geo:[null,null,'ang','circ','circ','area','area','vol','pyth','pyth'],data:['mean','mean','median','median','prob','prob','comp','comp','comp','comp']};
+const lessonFor=(t,L)=>{const k=LESSONS[t]&&LESSONS[t][clamp(L,1,10)-1];return k?{id:V[k][0],t:V[k][1]}:null};
+const thumb=id=>`https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+const VIDS=Object.fromEntries([...MUSIC.map(m=>[m.id,{t:m.t,sub:m.a+' · Official video'}]),...Object.values(V).map(v=>[v[0],{t:v[1],sub:'Khan Academy lesson'}])]);
+function playVideo(id){const v=VIDS[id]||{t:'Video',sub:''},local=location.protocol==='file:';
+ if(v.sub==='Khan Academy lesson'){S.watched.push({d:Date.now(),id});S.watched=S.watched.slice(-300);save()}
+ $('#modalRoot').innerHTML=`<div class="modal" onclick="if(event.target===this)closeVideo()"><div class="panel wide">
+  <div class="row" style="justify-content:space-between;margin-bottom:12px"><div><h2 class="fd" style="font-size:22px">${esc(v.t)}</h2><div class="mut" style="font-weight:700">${esc(v.sub)}</div></div><button class="iconbtn" onclick="closeVideo()">✕</button></div>
+  ${local?`<a class="vthumb" href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener" style="background-image:url(${thumb(id)})"></a><p class="mut center" style="font-weight:700;margin-top:10px">Tap to watch on YouTube (opens in a new tab)</p>`
+   :`<iframe class="vframe" src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
+     <p class="center" style="margin-top:10px"><a class="mut" style="font-weight:700" href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">Video not playing? Open it on YouTube ↗</a></p>`}
+  </div></div>`}
+function closeVideo(){$('#modalRoot').innerHTML=''}
+function unlockVideo(){const next=MUSIC.find(m=>!S.videos.includes(m.id));if(!next)return null;S.videos.push(next.id);return next}
+
+/* =========================================================
+   Question builder
+   ========================================================= */
+function autoFill(ans){const m=String(ans).match(/^(\$?)(−?)([\d.]+)(.*)$/);if(!m)return()=>null;
+ const pre=m[1],val=(m[2]?-1:1)*parseFloat(m[3]),suf=m[4],dec=m[3].includes('.');
+ return()=>{let d=P([-10,-5,-4,-3,-2,-1,1,2,3,4,5,10]);if(Math.abs(val)>60)d*=P([1,2,5]);if(dec&&Math.random()<.5)d=d/10;let v=val+d;
+  if(pre==='$'){if(v<=0)return null;return money(v)+suf}if(val>0&&v<=0)return null;return num(v)+suf}}
+const fracFill=a=>()=>{const n=a.n+R(-3,3),d=a.d+R(-2,3);if(d<=0||n===0)return null;const f=new Fr(n,d);if(Math.abs(f.v-a.v)<1e-9)return null;return f.toString()};
+function build(o){
+ const ans=String(o.answer),seen=new Set([ans]),ch=[{v:ans,ok:true}];
+ for(const w of o.wrong||[]){if(ch.length>=4)break;const v=w&&w.v!=null?String(w.v):null;
+  if(!v||seen.has(v)||/-|NaN|Infinity|undefined/.test(v))continue;seen.add(v);ch.push({v,why:w.why})}
+ const f=o.fill||autoFill(ans);let t=0;
+ while(ch.length<4&&t++<80){const v=f();if(v==null||seen.has(v)||/-|NaN|Infinity|undefined/.test(v))continue;seen.add(v);ch.push({v,why:null})}
+ o.answer=ans;o.choices=shuffle(ch);return o}
+
+/* =========================================================
+   Generators, level 1..10
+   L1-2 ≈ Grade 5 · L3-4 ≈ Grade 6 · L5-7 ≈ Grade 7 · L8-10 ≈ Grade 8
+   ========================================================= */
+function gInt(L){const s=ST();
+ if(L<=2){let a,b;do{a=-R(3,15);b=R(2,15)}while(b===-a);const ans=a+b,big=Math.max(-a,b),sm=Math.min(-a,b);
+  return build({text:P([`It was <b>${num(a)}°C</b> outside ${s}'s winter concert in ${city()}. By the encore it warmed up by <b>${b}°</b>. What's the temperature now?`,`Evaluate: <b>${num(a)} + ${b}</b>`]),
+   answer:num(ans),wrong:[
+   {v:num(-ans),why:`You found the right size (${Math.abs(ans)}) but the wrong sign. The number with the bigger size is ${-a>b?`${num(a)} (negative)`:`${b} (positive)`}, so the answer is ${ans<0?'negative':'positive'}.`},
+   {v:num(-a+b),why:`You added ${-a} + ${b}. But ${num(a)} is negative and ${b} is positive. They pull in opposite directions, so you subtract their sizes instead.`},
+   {v:num(a-b),why:`You moved the wrong way. Adding ${b} means moving ${b} steps UP (to the right) on the number line, not down.`}],
+   steps:[`Start at ${num(a)} on the number line (or thermometer).`,`Adding ${b} means moving ${b} steps up.`,`The signs are different, so subtract the sizes: ${big} − ${sm} = ${big-sm}.`,`Keep the sign of the number with the bigger size → <b>${num(ans)}</b>.`],
+   hint:`Picture a thermometer. Start at ${num(a)} and go up ${b} degrees.`,tip:`Different signs? Subtract the sizes and keep the sign of the "stronger" number.`})}
+ if(L===3){const a=R(1,15),b=R(2,12),ans=a+b,c1=city(),c2=P(CITIES.filter(c=>c!==c1));
+  const word=Math.random()<.5;
+  return build({text:word?`On tour day, it's <b>${a}°C</b> in ${c1} and <b>${num(-b)}°C</b> in ${c2}. How many degrees warmer is ${c1}? (Find ${a} − (${num(-b)}).)`:`Evaluate: <b>${a} − (${num(-b)})</b>`,
+   answer:num(ans),wrong:[
+   {v:num(a-b),why:`You treated "− (${num(-b)})" like "− ${b}". Subtracting a negative is the same as ADDING: two minus signs next to each other turn into a plus.`},
+   {v:num(-ans),why:`The size is right but the sign isn't. ${a} − (${num(-b)}) = ${a} + ${b}, and adding two positives gives a positive.`},
+   {v:num(b-a),why:`You subtracted in the wrong order. Rewrite it first: ${a} − (${num(-b)}) becomes ${a} + ${b}.`}],
+   steps:[`Two minus signs side by side make a plus: ${a} − (${num(-b)}) = ${a} + ${b}.`,`Add: ${a} + ${b} = <b>${num(ans)}</b>.`],
+   hint:`"Minus a negative" = "plus". Rewrite the problem first!`,tip:`Taking away a negative (like taking away a bad vibe) makes things go UP.`})}
+ if(L<=6){let a=R(2,12)*P([1,-1]),b=R(2,12)*P([1,-1]);if(a>0&&b>0)a=-a;
+  if(L===4){const ans=a*b,word=a<0&&b>0&&Math.random()<.5;
+   return build({text:word?`${s}'s stage lift moves down <b>${-a} ft</b> every second (that's ${num(a)} ft per second). What's its total change in height after <b>${b} seconds</b>?`:`Evaluate: <b>${num(a)} × ${pn(b)}</b>`,
+    answer:num(ans),wrong:[
+    {v:num(-ans),why:`The size ${Math.abs(ans)} is right, but check the sign rule: ${(a<0)===(b<0)?'same signs → positive':'different signs → negative'}. ${num(a)} and ${num(b)} have ${(a<0)===(b<0)?'the same sign':'different signs'}.`},
+    {v:num(a+b),why:`You added the numbers. The problem asks you to MULTIPLY (${num(a)} × ${pn(b)}).`}],
+    steps:[`Multiply the sizes: ${Math.abs(a)} × ${Math.abs(b)} = ${Math.abs(ans)}.`,`Sign rule: ${(a<0)===(b<0)?'same signs → positive':'different signs → negative'}.`,`Answer: <b>${num(ans)}</b>.`],
+    hint:`Multiply like normal, then decide the sign: same signs = +, different signs = −.`,tip:`Same signs = positive vibes ➕. Different signs = negative ➖.`})}
+  const p=a*b,ans=b;
+  return build({text:L===6&&p<0&&a>0?`Over <b>${a} days</b>, ${s}'s rival chart song changed by <b>${num(p)}</b> places in total, the same amount each day. What was the change per day?`:`Evaluate: <b>${num(p)} ÷ ${pn(a)}</b>`,
+   answer:num(ans),wrong:[
+   {v:num(-ans),why:`The size is right, but the sign isn't. Division uses the same sign rule as multiplication: ${(p<0)===(a<0)?'same signs → positive':'different signs → negative'}.`},
+   {v:num(p-a),why:`You subtracted. The problem asks you to DIVIDE ${num(p)} by ${pn(a)}.`},
+   {v:num(p*a),why:`You multiplied. Dividing means "how many groups of ${pn(a)} fit into ${num(p)}?"`}],
+   steps:[`Divide the sizes: ${Math.abs(p)} ÷ ${Math.abs(a)} = ${Math.abs(b)}.`,`Sign rule: ${(p<0)===(a<0)?'same signs → positive':'different signs → negative'}.`,`Answer: <b>${num(ans)}</b>.`],
+   hint:`Divide like normal, then use the sign rule (same signs +, different signs −).`,tip:`× and ÷ use the SAME sign rules.`})}
+ if(L<=8){const a=R(-10,10),b=R(2,6)*P([1,-1]),c=R(2,6)*P([1,-1]),ans=a+b*c;
+  return build({text:`Evaluate: <b>${num(a)} + ${pn(b)} × ${pn(c)}</b>`,answer:num(ans),wrong:[
+   {v:num((a+b)*c),why:`You worked left to right and added first. Order of operations says MULTIPLY before you add, so do ${pn(b)} × ${pn(c)} first.`},
+   {v:num(a-b*c),why:`Check the sign of ${pn(b)} × ${pn(c)}: it's ${num(b*c)} (${(b<0)===(c<0)?'same signs → positive':'different signs → negative'}).`},
+   {v:num(a+b+c),why:`You added everything. The × sign means multiply ${pn(b)} and ${pn(c)}.`}],
+   steps:[`Multiply first: ${pn(b)} × ${pn(c)} = ${num(b*c)}.`,`Then add: ${num(a)} + ${pn(b*c)} = <b>${num(ans)}</b>.`],
+   hint:`PEMDAS: multiplication comes before addition.`,tip:`Order of operations: Parentheses → Exponents → Multiply/Divide → Add/Subtract.`})}
+ const a=R(2,6),b=R(2,5),c=R(2,9)*P([1,-1]),ans=a*a-b*c;
+ return build({text:`Evaluate: <b>(−${a})² − ${b} × ${pn(c)}</b>`,answer:num(ans),wrong:[
+  {v:num(-a*a-b*c),why:`(−${a})² means (−${a}) × (−${a}). A negative times a negative is POSITIVE, so it's +${a*a}, not −${a*a}.`},
+  {v:num(-2*a-b*c),why:`The little ² means "multiply the number by itself", not "times 2". (−${a})² = (−${a}) × (−${a}) = ${a*a}.`},
+  {v:num((a*a-b)*c),why:`You subtracted before multiplying. Do exponents, then multiply ${b} × ${pn(c)}, and subtract last.`}],
+  steps:[`Exponent first: (−${a})² = (−${a}) × (−${a}) = ${a*a}.`,`Multiply: ${b} × ${pn(c)} = ${num(b*c)}.`,`Subtract: ${a*a} − ${pn(b*c)} = <b>${num(ans)}</b>.`],
+  hint:`Do the exponent first. What's a negative times a negative?`,tip:`(−3)² = 9, but −3² = −9. The parentheses matter!`})}
+
+function gFrac(L){const s=ST();
+ if(L<=3){let a,b,c,d;
+  if(L===1){b=P([4,5,6,8,10,12]);d=b;a=R(1,b-2);c=R(1,b-a-1)}
+  else{do{b=P([2,3,4,5,6,8]);d=P([2,3,4,5,6,8]);a=R(1,b-1);c=R(1,d-1)}while(b===d||gcd(a,b)!==1||gcd(c,d)!==1)}
+  const ans=new Fr(a,b).add(new Fr(c,d)),l=lcm(b,d),A=a*l/b,C=c*l/d,raw=`${A+C}/${l}`;
+  const w=[{v:new Fr(a+c,b+d),why:`You added the tops AND the bottoms. The bottom number (denominator) tells the SIZE of the pieces. It doesn't get added. ${b===d?'The pieces are already the same size, so just add the tops.':'First make the pieces the same size (common denominator), then add only the tops.'}`}];
+  if(b!==d)w.push({v:new Fr(a+c,l),why:`Good start! ${l} is the right common denominator! But you forgot to change the tops. When ${b} becomes ${l}, the top must be multiplied by ${l/b} too (and ${d} → ${l} means ×${l/d}).`});
+  else w.push({v:new Fr(a*c,b),why:`You multiplied the tops. For adding, you ADD the tops: ${a} + ${c}.`});
+  return build({text:P([`${s} rehearsed choreography for <b>${a}/${b}</b> of an hour before lunch and <b>${c}/${d}</b> of an hour after. How many hours in total?`,`Add: <b>${a}/${b} + ${c}/${d}</b>`]),
+   answer:ans.toString(),wrong:w,fill:fracFill(ans),
+   steps:b===d?[`The pieces are already the same size (${b}ths).`,`Add the tops: ${a} + ${c} = ${a+c}. Keep the bottom: ${a+c}/${b}.`,raw!==ans.toString()?`Simplify: ${a+c}/${b} = <b>${ans}</b>.`:`Answer: <b>${ans}</b>.`]
+    :[`Find a common denominator: the smallest number both ${b} and ${d} go into is ${l}.`,`Rewrite: ${a}/${b} = ${A}/${l} and ${c}/${d} = ${C}/${l}.`,`Add the tops: ${A} + ${C} = ${A+C} → ${raw}.`,raw!==ans.toString()?`Simplify: ${raw} = <b>${ans}</b>.`:`Answer: <b>${ans}</b>.`],
+   hint:b===d?`Same-size pieces, just add the tops!`:`Make the bottoms match first. What number do ${b} and ${d} both go into?`,tip:`Adding fractions: same bottoms first, then add the tops. Bottoms never get added!`})}
+ if(L===4){const b=P([3,4,5,6,8]),a=R(1,b-1),N=b*R(3,12),ans=a*N/b;
+  return build({text:`There are <b>${N}</b> seats in the VIP section of ${s}'s concert. <b>${a}/${b}</b> of them are already sold. How many seats are sold?`,
+   answer:num(ans),wrong:[
+   {v:num(N/b),why:`You found 1/${b} of ${N} (one group of ${N/b}). But we need ${a} of those groups, so multiply by ${a}.`},
+   {v:num(N-ans),why:`That's how many seats are NOT sold yet. The question asks how many ARE sold.`},
+   {v:Number.isInteger(N*b/a)?num(N*b/a):null,why:`You divided by ${a}/${b} instead of multiplying. "${a}/${b} of" means multiply.`}],
+   steps:[`"${a}/${b} of ${N}" means: split ${N} into ${b} equal groups and take ${a} of them.`,`One group: ${N} ÷ ${b} = ${N/b}.`,`${a} groups: ${a} × ${N/b} = <b>${ans}</b>.`],
+   hint:`First find 1/${b} of ${N} by dividing.`,tip:`"Of" means multiply! 3/4 of 20 = 20 ÷ 4 × 3.`})}
+ if(L===5){let a,b,c,d;do{b=P([2,3,4,5,6]);d=P([3,4,5,6,7]);a=R(1,b-1);c=R(1,d-1)}while(b===d&&a===c);
+  const ans=new Fr(a*c,b*d);
+  return build({text:`Multiply: <b>${a}/${b} × ${c}/${d}</b>`,answer:ans.toString(),fill:fracFill(ans),wrong:[
+   {v:new Fr(a*d,b*c),why:`You multiplied across diagonally (that's a trick for comparing or dividing). For multiplying, go straight across: top × top, bottom × bottom.`},
+   {v:new Fr(a+c,b+d),why:`You added the tops and bottoms. For multiplying, MULTIPLY them: ${a} × ${c} and ${b} × ${d}.`},
+   {v:new Fr(a*c,b+d),why:`The tops are right, but the bottoms should be multiplied too: ${b} × ${d} = ${b*d}.`}],
+   steps:[`Multiply the tops: ${a} × ${c} = ${a*c}.`,`Multiply the bottoms: ${b} × ${d} = ${b*d}.`,`${a*c}/${b*d}${ans.toString()!==`${a*c}/${b*d}`?` simplifies to <b>${ans}</b>`:` → <b>${ans}</b>`}.`],
+   hint:`Straight across: top × top, bottom × bottom.`,tip:`Multiplying fractions is the easy one, no common denominator needed!`})}
+ if(L<=7){let a,b,c,d,text;
+  if(L===6){b=P([2,3,4]);const k=R(2,4);d=b*k;a=R(1,b-1);c=1;text=`${s}'s stylist has <b>${a}/${b} m</b> of sparkly ribbon. Each bow needs <b>1/${d} m</b>. How many bows can she make? (${a}/${b} ÷ 1/${d})`}
+  else{do{b=R(2,9);d=R(2,9);a=R(1,b-1);c=R(1,d-1)}while(gcd(a,b)!==1||gcd(c,d)!==1||a*d===b*c);text=`Divide: <b>${a}/${b} ÷ ${c}/${d}</b>`}
+  const ans=new Fr(a*d,b*c);
+  return build({text,answer:ans.toString(),fill:fracFill(ans),wrong:[
+   {v:new Fr(a*c,b*d),why:`You multiplied straight across without flipping. For dividing, use Keep, Change, Flip: keep ${a}/${b}, change ÷ to ×, and FLIP ${c}/${d} to ${d}/${c}.`},
+   {v:new Fr(b*c,a*d),why:`You flipped the FIRST fraction. Only the second fraction (the one you're dividing by) gets flipped.`},
+   {v:new Fr(a-c,b-d).v>0&&b!==d?new Fr(a-c,b-d):null,why:`Dividing fractions doesn't mean dividing (or subtracting) top and bottom separately. Use Keep, Change, Flip.`}],
+   steps:[`Keep the first fraction: ${a}/${b}.`,`Change ÷ to ×.`,`Flip the second fraction: ${c}/${d} → ${d}/${c}.`,`Multiply: ${a}/${b} × ${d}/${c} = ${a*d}/${b*c}${ans.toString()!==`${a*d}/${b*c}`?` = <b>${ans}</b>`:''}.`],
+   hint:`Keep, Change, Flip!`,tip:`Keep, Change, Flip (KCF), like a dance move: keep the first, change the sign, flip the second. 💃`})}
+ if(L===8){let a,b,c,d;do{b=P([2,3,4,5,6]);d=P([2,3,4,5,6,8]);a=R(1,b-1);c=R(1,d-1)}while(b===d||a/b>=c/d);
+  const ans=new Fr(a,b).sub(new Fr(c,d)),l=lcm(b,d),A=a*l/b,C=c*l/d;
+  return build({text:`Evaluate: <b>${a}/${b} − ${c}/${d}</b>`,answer:ans.toString(),fill:fracFill(ans),wrong:[
+   {v:ans.neg(),why:`You got the size right but lost the minus sign. ${c}/${d} is BIGGER than ${a}/${b}, so taking it away goes below zero, the answer is negative.`},
+   {v:new Fr(a-c,l).v!==ans.v?new Fr(a-c,l):null,why:`You found the common denominator ${l} but didn't change the tops. ${a}/${b} becomes ${A}/${l}, and ${c}/${d} becomes ${C}/${l}.`},
+   {v:new Fr(C-A,l).v!==-ans.v?null:null,why:''}],
+   steps:[`Common denominator of ${b} and ${d}: ${l}.`,`Rewrite: ${A}/${l} − ${C}/${l}.`,`Subtract the tops: ${A} − ${C} = ${num(A-C)}.`,`Answer: <b>${ans}</b> (negative, because you took away more than you had).`],
+   hint:`Which fraction is bigger? If you subtract a bigger number, the answer is negative.`,tip:`Small − Big = Negative. Always check which fraction is bigger!`})}
+ let a,b,c,d;do{b=R(2,7);d=R(2,7);a=R(1,b-1);c=R(1,d-1)}while(gcd(a,b)!==1||gcd(c,d)!==1||a*d===b*c);
+ const both=L===10&&Math.random()<.5,ans=both?new Fr(a*d,b*c):new Fr(-a*d,b*c);
+ return build({text:`Evaluate: <b>(−${a}/${b}) ÷ ${both?`(−${c}/${d})`:`${c}/${d}`}</b>`,answer:ans.toString(),fill:fracFill(ans),wrong:[
+  {v:ans.neg(),why:both?`A negative divided by a negative is POSITIVE. Same signs → positive.`:`A negative divided by a positive is NEGATIVE. Different signs → negative.`},
+  {v:both?new Fr(a*c,b*d):new Fr(-a*c,b*d),why:`You forgot to flip the second fraction. Dividing = multiplying by the flip (reciprocal): ${c}/${d} → ${d}/${c}.`},
+  {v:both?new Fr(-a*c,b*d):new Fr(a*c,b*d),why:`Two things went wrong: the second fraction needs to be flipped, and check the sign rule.`}],
+  steps:[`Sign first: ${both?'negative ÷ negative = positive':'negative ÷ positive = negative'}.`,`Keep, Change, Flip: ${a}/${b} × ${d}/${c} = ${a*d}/${b*c}.`,`Answer: <b>${ans}</b>.`],
+  hint:`Decide the sign first, then Keep, Change, Flip.`,tip:`Sign rules for fractions are the same as for whole numbers.`})}
+
+function gRatio(L){const s=ST();
+ if(L<=2){const n=R(3,9),u=R(3,15),tot=n*u,item=P(['albums','photocard packs','posters','lightstick batteries','concert tees','keychains']);
+  return build({text:`${s}'s fan club bought <b>${n} ${item}</b> for <b>$${tot}</b> total. Each one cost the same. How much did ONE cost?`,answer:money(u),wrong:[
+   {v:money(tot-n),why:`You subtracted ${n} from ${tot}. To share a total cost equally, DIVIDE: $${tot} ÷ ${n}.`},
+   {v:money(tot*n),why:`You multiplied, that makes it bigger! One item should cost LESS than the total, so divide.`},
+   {v:money(n/tot),why:`You divided the wrong way (items ÷ dollars). Unit price = dollars ÷ items.`}],
+   steps:[`Unit price = the cost for 1 item.`,`Divide total cost by number of items: $${tot} ÷ ${n} = <b>$${u}</b>.`],
+   hint:`Share $${tot} equally into ${n} groups.`,tip:`Unit rate = "per 1". Divide the total by how many.`})}
+ if(L<=5){const n1=R(2,6),u=R(3,14);let n2;do{n2=R(3,12)}while(n2===n1);const c1=n1*u,c2=n2*u;
+  return build({text:`<b>${n1}</b> tickets to ${s}'s show cost <b>$${c1}</b>. At the same price, how much would <b>${n2}</b> tickets cost?`,answer:money(c2),wrong:[
+   {v:money(c1+(n2-n1)),why:`You changed the price by the same amount the tickets changed (${n2>n1?'+':'−'}${Math.abs(n2-n1)}). But each ticket costs $${u}, not $1. Prices scale by MULTIPLYING, not adding.`},
+   {v:money(c1*n2),why:`You multiplied $${c1} by ${n2}, but $${c1} is the price of ${n1} tickets, not 1. Find the price of ONE ticket first.`},
+   {v:money(c1*n1/n2),why:`You scaled the wrong way. ${n2} tickets is ${n2>n1?'MORE':'FEWER'} than ${n1}, so the cost should go ${n2>n1?'UP':'DOWN'} from $${c1}, not ${n2>n1?'down':'up'}. Find the price of ONE ticket first.`}],
+   steps:[`Find the price of 1 ticket: $${c1} ÷ ${n1} = $${u}.`,`Multiply by ${n2}: ${n2} × $${u} = <b>${money(c2)}</b>.`],
+   hint:`How much is ONE ticket?`,tip:`Stuck on a ratio? Find the value of ONE first, then scale up.`})}
+ if(L<=7){let p,q;do{p=R(1,5);q=R(2,7)}while(p===q||gcd(p,q)!==1);const k=R(3,9),tot=(p+q)*k;
+  return build({text:`On ${S.name}'s playlist, the ratio of ${s} songs to other songs is <b>${p} : ${q}</b>. There are <b>${tot}</b> songs in total. How many are ${s} songs?`,answer:num(p*k),wrong:[
+   {v:num(q*k),why:`That's the number of OTHER songs (the ${q} part). ${s} gets the ${p} part.`},
+   {v:num(k),why:`You found the size of ONE part (${k} songs). But ${s} gets ${p} parts, so multiply by ${p}.`},
+   {v:Number.isInteger(tot/p)?num(tot/p):null,why:`You divided the total by ${p}. But the total is split into ${p} + ${q} = ${p+q} parts.`}],
+   steps:[`Total parts: ${p} + ${q} = ${p+q}.`,`Songs per part: ${tot} ÷ ${p+q} = ${k}.`,`${s} gets ${p} parts: ${p} × ${k} = <b>${p*k}</b>.`],
+   hint:`How many parts are there altogether? ${p} + ${q} = ?`,tip:`Ratio sharing: add the parts, find one part, then multiply.`})}
+ const kk=P([1.5,2.5,0.5,1.25,3.5,4,0.75]),x1=4*R(1,3);let x2;do{x2=R(3,15)}while(x2===x1);const y1=kk*x1,y2=kk*x2;
+ return build({text:`${s}'s new song is streamed at a steady rate. In <b>${x1} hours</b> it got <b>${num(y1)} thousand</b> streams. At that rate, how many thousand streams in <b>${x2} hours</b>?`,answer:num(y2),wrong:[
+  {v:y1+(x2-x1)>0?num(y1+(x2-x1)):null,why:`You added ${x2-x1} because the hours changed by ${x2-x1}. Proportional means MULTIPLY by the rate (${num(kk)} thousand per hour), not add.`},
+  {v:num(kk),why:`You found the rate per hour (k = ${num(kk)}). Nice! Now multiply it by ${x2} hours.`},
+  {v:num(x1/y1*x2),why:`You flipped the rate (hours ÷ streams). The rate should be streams ÷ hours = ${num(y1)} ÷ ${x1}.`}],
+  steps:[`Find the constant of proportionality (rate per hour): k = ${num(y1)} ÷ ${x1} = ${num(kk)}.`,`Use y = kx: ${num(kk)} × ${x2} = <b>${num(y2)}</b> thousand.`],
+  hint:`Find the streams for 1 hour first.`,tip:`Proportional relationships: y = k·x, where k is the "per one" rate.`})}
+
+/* ----- Proportional relationships (Maya's current class unit, 7.RP.2) ----- */
+const PCTX=[
+ s=>({x:'Hours',y:'Streams (thousands)',xs:'hour',ys:'thousand streams',intro:`${s}'s new single is streamed at a steady rate.`}),
+ s=>({x:'Tickets',y:'Cost ($)',xs:'ticket',ys:'dollars',intro:`Every ticket to ${s}'s show costs the same.`}),
+ s=>({x:'Packs',y:'Photocards',xs:'pack',ys:'photocards',intro:`Every ${s} album pack has the same number of photocards.`}),
+ s=>({x:'Days',y:'New fans (thousands)',xs:'day',ys:'thousand new fans',intro:`${s}'s fan club grows at a steady rate.`}),
+ s=>({x:'Minutes',y:'Dance moves',xs:'minute',ys:'dance moves',intro:`${s}'s dance crew learns moves at a steady pace.`})];
+const ptab=(c,xs,ys)=>`<table class="ptab"><tr><th>${c.x}</th>${xs.map(v=>`<td>${num(v)}</td>`).join('')}</tr><tr><th>${c.y}</th>${ys.map(v=>`<td>${v==null?'<b class="qm">?</b>':num(v)}</td>`).join('')}</tr></table>`;
+function pgraph(c,k,px){const W=300,H=230,L=44,B=36,xmax=6,top=k*xmax,ystep=top<=6?1:top<=12?2:4,ymax=Math.ceil(top/ystep)*ystep;
+ const X=x=>L+x/xmax*(W-L-14),Y=y=>H-B-y/ymax*(H-B-14);let g='';
+ for(let i=0;i<=xmax;i++)g+=`<line x1="${X(i)}" y1="${Y(0)}" x2="${X(i)}" y2="${Y(ymax)}" stroke="rgba(255,255,255,.12)"/><text x="${X(i)}" y="${Y(0)+18}" fill="#cfc4ff" font-size="12" text-anchor="middle">${i}</text>`;
+ for(let v=0;v<=ymax+1e-9;v+=ystep)g+=`<line x1="${X(0)}" y1="${Y(v)}" x2="${X(xmax)}" y2="${Y(v)}" stroke="rgba(255,255,255,.12)"/><text x="${X(0)-7}" y="${Y(v)+4}" fill="#cfc4ff" font-size="12" text-anchor="end">${num(v)}</text>`;
+ return `<svg class="pgraph" viewBox="0 0 ${W} ${H}" role="img" aria-label="Graph of a proportional relationship">${g}<line x1="${X(0)}" y1="${Y(0)}" x2="${X(xmax)}" y2="${Y(0)}" stroke="#fff" stroke-width="2"/><line x1="${X(0)}" y1="${Y(0)}" x2="${X(0)}" y2="${Y(ymax)}" stroke="#fff" stroke-width="2"/><line x1="${X(0)}" y1="${Y(0)}" x2="${X(xmax)}" y2="${Y(k*xmax)}" stroke="var(--a)" stroke-width="4" stroke-linecap="round"/><circle cx="${X(0)}" cy="${Y(0)}" r="5" fill="#fff"/><circle cx="${X(px)}" cy="${Y(k*px)}" r="7" fill="var(--gold)"/><text x="${X(px)-10}" y="${Y(k*px)-12}" fill="#fff" font-size="14" font-weight="800" text-anchor="end">(${px}, ${num(k*px)})</text><text x="${(L+W)/2}" y="${H-4}" fill="#fff" font-size="12" font-weight="800" text-anchor="middle">${c.x}</text><text x="12" y="${(H-B)/2}" fill="#fff" font-size="12" font-weight="800" text-anchor="middle" transform="rotate(-90 12 ${(H-B)/2})">${c.y}</text></svg>`}
+const pairs=(xs,f)=>xs.map(x=>`(${num(x)}, ${num(f(x))})`).join(', ');
+function gProp(L){const s=ST(),c=P(PCTX)(s),kTxt=k=>num(k);
+ if(L<=2){const k=R(2,9),x1=R(2,4),x2=x1+R(2,3),x3=x2+R(2,4),xs=[x1,x2,x3],ys=xs.map(x=>k*x);
+  return build({text:`${c.intro}${ptab(c,xs,ys)}How many <b>${c.ys}</b> per <b>1 ${c.xs}</b>?`,short:`Table ${pairs(xs,x=>k*x)}: find the unit rate.`,answer:num(k),wrong:[
+   {v:num(ys[0]),why:`${num(ys[0])} is for ${x1} ${c.xs}s, not for 1. Divide: ${num(ys[0])} ÷ ${x1}.`},
+   {v:num(ys[1]-ys[0]),why:`You found how much it went up from one column to the next (${num(ys[1]-ys[0])}). But the ${c.x.toLowerCase()} went up by ${x2-x1}, not by 1.`},
+   {v:ys[0]-x1>0?num(ys[0]-x1):null,why:`You subtracted ${x1} from ${num(ys[0])}. A rate "per 1" means DIVIDE: ${num(ys[0])} ÷ ${x1}.`}],
+   steps:[`Unit rate = y ÷ x for any column.`,`${num(ys[0])} ÷ ${x1} = <b>${k}</b>. Check another column: ${num(ys[1])} ÷ ${x2} = ${k} ✓`],
+   hint:`Pick one column and divide the bottom number by the top number.`,tip:`Unit rate = how much for ONE. Divide y by x.`})}
+ if(L<=4){const k=R(2,8),x1=R(2,4);let x2,x3;do{x2=x1+R(1,3);x3=x2+R(2,6)}while(x3-x2===x2-x1);const xs=[x1,x2,x3],ys=[k*x1,k*x2,null],ans=k*x3;
+  return build({text:`${c.intro} The table is proportional.${ptab(c,xs,ys)}What number goes in the <b>?</b>`,short:`Proportional table ${pairs([x1,x2],x=>k*x)}, (${x3}, ?): find the missing value.`,answer:num(ans),wrong:[
+   {v:num(k*x2+(k*x2-k*x1)),why:`You added the same jump again (+${k*(x2-x1)}). But the top row jumped by ${x3-x2} this time, not ${x2-x1}. Use the rate per 1 instead.`},
+   {v:num(x3+(k*x2-x2)),why:`You kept the DIFFERENCE between the rows the same. In a proportional table, the RATIO (y ÷ x) stays the same, not the difference.`},
+   {v:num(k*x2*x3),why:`You multiplied ${k*x2} by ${x3}, but ${k*x2} is the value for ${x2}, not for 1. Find the rate per 1 first.`}],
+   steps:[`Find k = y ÷ x: ${k*x1} ÷ ${x1} = ${k}.`,`Multiply: ${k} × ${x3} = <b>${ans}</b>.`],
+   hint:`Find how much for 1 first, then multiply by ${x3}.`,tip:`Proportional tables MULTIPLY by the same k every time.`})}
+ if(L<=5){const k=P([1.5,2.5,0.5,0.25,0.75,1.25,3.5,4.5]),xs=shuffle([4,6,8,10,12]).slice(0,3).sort((a,b)=>a-b),ys=xs.map(x=>k*x);
+  return build({text:`${c.intro}${ptab(c,xs,ys)}What is the <b>constant of proportionality</b> (k) for ${c.y.replace(/ \(.*\)/,'').toLowerCase()} per ${c.xs}?`,short:`Table ${pairs(xs,x=>k*x)}: find k.`,answer:num(k),wrong:[
+   {v:num(r2(1/k)),why:`You divided x ÷ y (upside down). k = y ÷ x: ${num(ys[0])} ÷ ${xs[0]}.`},
+   {v:num(ys[1]-ys[0]),why:`That's how much y went up between columns, but x went up by ${xs[1]-xs[0]}, not 1. Divide y by x instead.`},
+   {v:ys[0]>xs[0]?num(ys[0]-xs[0]):num(ys[0]),why:ys[0]>xs[0]?`You subtracted. k is a ratio, so divide: ${num(ys[0])} ÷ ${xs[0]}.`:`That's just the first y-value. k = y ÷ x.`}],
+   steps:[`k = y ÷ x.`,`${num(ys[0])} ÷ ${xs[0]} = <b>${num(k)}</b>, and ${num(ys[2])} ÷ ${xs[2]} = ${num(k)} too ✓`],
+   hint:`Divide the bottom number by the top number in any column.`,tip:`k = y ÷ x. It's the same for every column in a proportional table.`,fill:autoFill(num(k))})}
+ if(L<=6){const k=P([2,3,4,5,1.5,2.5,0.5,6]),xs=[2,4,6].map(x=>x+(k%1?0:R(0,1))),ys=xs.map(x=>k*x),d=ys[0]-xs[0];
+  return build({text:`${c.intro}${ptab(c,xs,ys)}Which equation shows the relationship? (x = ${c.x.toLowerCase()}, y = ${c.y.replace(/ \(.*\)/,'').toLowerCase()})`,short:`Table ${pairs(xs,x=>k*x)}: pick the equation.`,answer:`y = ${kTxt(k)}x`,wrong:[
+   {v:d>0?`y = x + ${num(d)}`:null,why:`y = x + ${num(d)} only works for the first column. Check: ${xs[1]} + ${num(d)} = ${num(xs[1]+d)}, not ${num(ys[1])}. Proportional means MULTIPLY by k.`},
+   {v:`x = ${kTxt(k)}y`,why:`The letters are switched. y is what you get, so y = k × x.`},
+   {v:`y = ${num(ys[0])}x`,why:`${num(ys[0])} is the y-value when x = ${xs[0]}. k is the value when x = 1: ${num(ys[0])} ÷ ${xs[0]} = ${kTxt(k)}.`},
+   {v:`y = ${num(r2(1/k))}x`,why:`You found x ÷ y. k = y ÷ x = ${kTxt(k)}.`}],
+   steps:[`Find k = y ÷ x: ${num(ys[0])} ÷ ${xs[0]} = ${kTxt(k)}.`,`Proportional equations look like y = kx, so <b>y = ${kTxt(k)}x</b>.`],
+   hint:`Every proportional equation looks like y = kx. Find k first.`,tip:`y = kx. k is the "per 1" rate.`})}
+ if(L<=7){const k=R(2,6),cc=R(2,5),xs=[R(1,2),R(3,4),R(5,7)];
+  const right=pairs(xs,x=>k*x),add=pairs(xs,x=>x+cc),plus1=pairs(xs,x=>k*x+1),broke=xs.map((x,i)=>`(${x}, ${i===2?k*x+P([-1,1,2]):k*x})`).join(', ');
+  return build({text:`${c.intro.replace(/ at a steady rate| at a steady pace/,'')} Which set of (${c.x.toLowerCase()}, ${c.y.replace(/ \(.*\)/,'').toLowerCase()}) pairs shows a <b>proportional</b> relationship?`,short:`Which set of pairs is proportional?`,answer:right,wrong:[
+   {v:add,why:`Here y = x + ${cc}. Check y ÷ x: ${num(xs[0]+cc)} ÷ ${xs[0]} and ${num(xs[1]+cc)} ÷ ${xs[1]} are different, so it's NOT proportional. Adding a number never makes a proportional relationship.`},
+   {v:plus1,why:`Check y ÷ x: ${k*xs[0]+1} ÷ ${xs[0]} and ${k*xs[1]+1} ÷ ${xs[1]} are different. The extra +1 means it doesn't start at (0, 0).`},
+   {v:broke,why:`So close! The first two pairs have y ÷ x = ${k}, but the last one breaks the pattern. ALL pairs must have the same ratio.`}],
+   steps:[`For each set, divide y ÷ x for every pair.`,`Only one set gives the same number every time: ${xs.map(x=>`${k*x} ÷ ${x} = ${k}`).join(', ')}.`,`So <b>${right}</b> is proportional, with k = ${k}.`],
+   hint:`Divide y by x for every pair. Proportional means you get the SAME answer each time.`,tip:`Proportional test: y ÷ x is the same for every pair (and it goes through (0, 0)).`})}
+ if(L<=8){const k=P([0.5,1.5,2,2.5,3,4]),px=k%1?2*R(1,2):R(2,4),py=k*px;
+  return build({text:`${c.intro} The graph shows the relationship.${pgraph(c,k,px)}What is the unit rate (the y-value when x = 1)?`,short:`Graph through (0, 0) and (${px}, ${num(py)}): find the unit rate.`,answer:num(k),wrong:[
+   {v:num(py),why:`${num(py)} is the y-value at x = ${px}. The unit rate is the y-value at x = 1: ${num(py)} ÷ ${px}.`},
+   {v:num(r2(px/py)),why:`You divided x ÷ y. The unit rate is y ÷ x = ${num(py)} ÷ ${px}.`},
+   {v:py-px>0?num(py-px):null,why:`You subtracted. A proportional graph is a straight line through (0, 0), so divide: ${num(py)} ÷ ${px}.`}],
+   steps:[`The line goes through (0, 0) and (${px}, ${num(py)}), so it's proportional.`,`Unit rate = y ÷ x = ${num(py)} ÷ ${px} = <b>${num(k)}</b>.`,`That means the point (1, ${num(k)}) is on the line too.`],
+   hint:`Use the marked point. Divide its y by its x.`,tip:`On a proportional graph, the point (1, r) shows the unit rate r.`})}
+ if(L<=9){const A=P([[1,2],[2,3],[3,4],[3,5],[5,6],[1,3],[2,5]]),Bs=P([[1,2],[1,3],[1,4],[2,3],[3,4]]);if(A[0]===Bs[0]&&A[1]===Bs[1])return gProp(9);
+  const a=new Fr(...A),b=new Fr(...Bs),ans=a.div(b),act=P([['learns','of a dance routine','routines'],['paints','of a fan banner','banners'],['records','of a cover song','songs']]);
+  return build({text:`${s}'s crew ${act[0]} <b>${a} ${act[1]}</b> in <b>${b} hour</b>. At that rate, how many ${act[2]} per hour?`,short:`${a} ${act[1]} in ${b} hour: rate per hour?`,answer:ans.toString(),wrong:[
+   {v:a.mul(b).toString(),why:`You multiplied ${a} × ${b}. To find "per 1 hour", DIVIDE the amount by the time: ${a} ÷ ${b}.`},
+   {v:b.div(a).toString(),why:`You divided time ÷ amount (that's hours per ${act[2].slice(0,-1)}). The question asks ${act[2]} per hour: ${a} ÷ ${b}.`},
+   {v:a.toString()===ans.toString()?null:a.toString(),why:`That's the amount for ${b} hour, not for a whole hour.`}],
+   steps:[`Rate per hour = amount ÷ time = ${a} ÷ ${b}.`,`Dividing by a fraction = multiply by its flip: ${a} × ${Bs[1]}/${Bs[0]} = <b>${ans}</b>.`,ans.v>1?`So that's ${num(r2(ans.v))} ${act[2]} every hour.`:`So that's less than one whole ${act[2].slice(0,-1)} every hour.`],
+   hint:`Divide: ${a} ÷ ${b}. Remember keep, change, flip!`,tip:`Unit rate with fractions: still divide amount ÷ time. Keep, change, flip.`,fill:fracFill(ans)})}
+ let k1=P([1.5,2.5,3.5,2,4,5]),k2=R(2,6);while(k2===k1)k2=R(2,6);const xs=[2,4,6],a1=P(['Freya Skye','Taylor Swift']),a2=P(['Harry Styles','KATSEYE']),diff=Math.abs(k1-k2),fast=k1>k2?a1:a2;
+ return build({text:`Two fan clubs grow at steady rates (x = days, y = thousand new fans).<br>🎤 <b>${a1}</b>: y = ${num(k1)}x<br>🎤 <b>${a2}</b>:${ptab({x:'Days',y:'Fans (k)'},xs,xs.map(x=>k2*x))}How many MORE thousand fans per day does the faster club gain?`,short:`${a1}: y = ${num(k1)}x vs ${a2}: table ${pairs(xs,x=>k2*x)}. Difference per day?`,answer:num(diff),wrong:[
+  {v:num(Math.abs(k1-k2*2)),why:`You compared with ${a2}'s value for 2 days (${k2*2}). Find their rate per 1 day first: ${k2*2} ÷ 2 = ${k2}.`},
+  {v:num(Math.max(k1,k2)),why:`That's just the faster club's rate. The question asks how many MORE: subtract the two rates.`},
+  {v:num(k1+k2),why:`You added the rates. "How many more" means subtract: ${num(Math.max(k1,k2))} − ${num(Math.min(k1,k2))}.`}],
+  steps:[`${a1}: k = ${num(k1)} (the number in front of x).`,`${a2}: k = ${k2*2} ÷ 2 = ${k2}.`,`${fast} grows faster: ${num(Math.max(k1,k2))} − ${num(Math.min(k1,k2))} = <b>${num(diff)}</b> thousand more per day.`],
+  hint:`Find k for each club, then subtract.`,tip:`To compare proportional relationships, compare their k values (unit rates).`})}
+
+function gPct(L){const s=ST();
+ if(L<=2){const p=P([10,20,25,50,75]),base=p%25===0&&p!==50?4*R(3,25):p===50?2*R(5,50):10*R(2,20),ans=p*base/100;
+  return build({text:`${s} gave away <b>${p}%</b> of <b>${base}</b> signed posters at a fan meet. How many posters is that?`,answer:num(ans),wrong:[
+   {v:base>p?num(base-p):null,why:`You subtracted ${p}. "Percent" means "out of 100", so ${p}% of ${base} = ${p}/100 × ${base}.`},
+   {v:num(base-ans),why:`That's how many posters are LEFT. The question asks how many were given away.`},
+   {v:Number.isInteger(base/p)?num(base/p):null,why:`You divided by ${p}. ${p}% is ${p} out of 100 → multiply by ${p/100}.`}],
+   steps:[`${p}% means ${p} out of 100 = ${p/100}.`,`Multiply: ${p/100} × ${base} = <b>${num(ans)}</b>.`,p===10?`Shortcut: 10% = move the decimal one place left!`:p===50?`Shortcut: 50% = half!`:p===25?`Shortcut: 25% = a quarter → divide by 4!`:`Shortcut: find 10% (${base/10}), then use it to build ${p}%.`],
+   hint:`${p}% = ${p}/100. Try a shortcut: 10% is easy to find!`,tip:`10% → move the decimal left. 50% → half. 25% → quarter.`})}
+ if(L<=4){const price=P([20,24,30,36,40,48,50,60,80,120]),p=P([10,20,25,30,40,50]),disc=price*p/100,ans=price-disc,item=P(['tour hoodie','lightstick','limited-edition vinyl','fan-club jacket','tour tote bag']);
+  return build({text:`A ${s} ${item} costs <b>$${price}</b>. It's on sale for <b>${p}% off</b>. What's the sale price?`,answer:money(ans),wrong:[
+   {v:money(disc),why:`That's how much you SAVE (the discount). The sale price is the original price MINUS the discount.`},
+   {v:money(price-p),why:`You took away $${p}. But it's ${p} PERCENT off, not ${p} dollars. ${p}% of $${price} is $${num(disc)}.`},
+   {v:money(price+disc),why:`You added the discount. "Off" means the price goes DOWN.`}],
+   steps:[`Find the discount: ${p}% of $${price} = ${p/100} × ${price} = $${num(disc)}.`,`Subtract: $${price} − $${num(disc)} = <b>${money(ans)}</b>.`,`Shortcut: ${p}% off means you pay ${100-p}% → ${(100-p)/100} × ${price} = ${money(ans)}.`],
+   hint:`First find how many dollars ${p}% of $${price} is.`,tip:`Sale price = original − discount. Or pay (100 − discount)%.`})}
+ if(L<=6){const price=5*R(4,24),p=P([5,6,8,10,15,18,20]),t=price*p/100,ans=price+t,tip=Math.random()<.45;
+  return build({text:tip?`${S.name}'s family spent <b>$${price}</b> at a restaurant after the ${s} concert and left a <b>${p}% tip</b>. What's the total including the tip?`:`A ticket to ${s}'s concert costs <b>$${price}</b> plus <b>${p}% sales tax</b>. What's the total cost?`,answer:money(ans),wrong:[
+   {v:money(t),why:`That's only the ${tip?'tip':'tax'}. The total = original price + ${tip?'tip':'tax'}.`},
+   {v:money(price+p),why:`You added $${p}. But it's ${p} PERCENT, which is ${money(t)} here.`},
+   {v:money(price-t),why:`You subtracted. ${tip?'A tip':'Tax'} is ADDED on top of the price.`}],
+   steps:[`${p}% of $${price} = ${p/100} × ${price} = ${money(t)}.`,`Add it on: $${price} + ${money(t)} = <b>${money(ans)}</b>.`,`Shortcut: total = ${1+p/100} × ${price}.`],
+   hint:`Find ${p}% of $${price}, then add it.`,tip:`Tax and tips go UP ⬆️. Discounts go DOWN ⬇️.`})}
+ if(L<=8){const o=20*R(1,15),p=P([10,20,25,50,60,75]),inc=Math.random()<.6,ch=o*p/100,n=inc?o+ch:o-ch;
+  return build({text:`${s}'s fan account had <b>${o}</b> new followers on Monday and <b>${n}</b> on Friday. What was the percent ${inc?'increase':'decrease'}?`,answer:`${p}%`,wrong:[
+   {v:`${num(ch/n*100)}%`,why:`You divided by the NEW number (${n}). Percent change always compares to the ORIGINAL (starting) amount: change ÷ ${o}.`},
+   {v:`${num(ch)}%`,why:`${num(ch)} is the change in followers, not the percent. Divide the change by the original and × 100.`},
+   {v:`${num(n/o*100)}%`,why:`${num(n/o*100)}% is the new amount compared to the old. The CHANGE is the difference from 100%.`}],
+   steps:[`Change: ${n} − ${o} = ${num(n-o)}.`,`Divide by the ORIGINAL: ${ch} ÷ ${o} = ${p/100}.`,`Turn into a percent: ${p/100} × 100 = <b>${p}%</b> ${inc?'increase':'decrease'}.`],
+   hint:`Percent change = change ÷ ORIGINAL × 100.`,tip:`Percent change: (new − old) ÷ OLD. Always divide by where you started.`})}
+ const p=P([10,20,25,40,50]),orig=20*R(2,10),sale=orig*(1-p/100);
+ return build({text:`After a <b>${p}% off</b> sale, a ${s} concert jacket costs <b>${money(sale)}</b>. What was the ORIGINAL price?`,answer:money(orig),wrong:[
+  {v:money(sale*(1+p/100)),why:`You added ${p}% of the SALE price. But the ${p}% was taken off the ORIGINAL (bigger) price. Use: ${(100-p)/100} × original = ${money(sale)}.`},
+  {v:money(sale+p),why:`You added $${p}. The discount was ${p}%, not $${p}.`},
+  {v:money(sale/(p/100)),why:`You divided by ${p}%. The sale price is the ${100-p}% that's LEFT, so divide by ${(100-p)/100}.`}],
+  steps:[`After ${p}% off, you pay ${100-p}% of the original.`,`So ${(100-p)/100} × original = ${money(sale)}.`,`Divide: ${money(sale)} ÷ ${(100-p)/100} = <b>${money(orig)}</b>.`,`Check: ${p}% of ${money(orig)} is ${money(orig*p/100)}, and ${money(orig)} − ${money(orig*p/100)} = ${money(sale)} ✓`],
+  hint:`What percent of the original is ${money(sale)}?`,tip:`Working backwards? Sale price ÷ (percent you paid) = original.`})}
+
+function gExpr(L){const s=ST();
+ if(L<=2){const a=R(2,9),b=R(1,12),x=R(2,9),ans=a*x+b;
+  return build({text:`In a rhythm game based on ${s}'s songs, your score is <b>${a}x + ${b}</b>, where x is the number of perfect hits. What's your score when <b>x = ${x}</b>?`,answer:num(ans),wrong:[
+   {v:num(Number(`${a}${x}`)+b),why:`You wrote ${a} and ${x} side by side to make ${a}${x}. But ${a}x means ${a} TIMES x.`},
+   {v:num(a*(x+b)),why:`You added before multiplying. Multiply first (${a} × ${x}), then add ${b}.`},
+   {v:num(a+x+b),why:`You added ${a} and ${x}. "${a}x" means ${a} × x.`}],
+   steps:[`Replace x with ${x}: ${a} × ${x} + ${b}.`,`Multiply first: ${a} × ${x} = ${a*x}.`,`Then add: ${a*x} + ${b} = <b>${ans}</b>.`],
+   hint:`${a}x means ${a} × x. Swap in ${x} for x.`,tip:`A number stuck to a letter means MULTIPLY: 3x = 3 × x.`})}
+ if(L<=4){const a=R(2,9);let c;do{c=R(1,8)*P([1,-1])}while(a+c===0);const b=R(1,12),d=R(1,12),A=a+c,B=b-d;
+  const cx=Math.abs(c)===1?'x':`${Math.abs(c)}x`,expr=`${a}x + ${b} ${sgn(c)} ${cx} − ${d}`,ans=lin(A,B);
+  return build({text:`Simplify: <b>${expr}</b>`,answer:ans,fill:()=>lin(A+R(-2,2),B+R(-3,3)),wrong:[
+   {v:lin(A+B,0),why:`You combined the x-terms with the plain numbers. Only LIKE terms combine: x's with x's, numbers with numbers. (Think: you can't add albums and posters into one pile!)`},
+   {v:lin(A,b+d),why:`Watch the sign in front of ${d}: it's MINUS ${d}. So the numbers are ${b} − ${d} = ${num(B)}.`},
+   {v:lin(a-c,B),why:`The sign in front of a term belongs to it: that term is ${sgn(c)}${cx}. So the x-terms are ${a} ${sgn(c)} ${Math.abs(c)} = ${A}.`}],
+   steps:[`Group like terms: (${a}x ${sgn(c)} ${cx}) and (${b} − ${d}).`,`x-terms: ${a} ${sgn(c)} ${Math.abs(c)} = ${A} → ${lin(A,0)}.`,`Numbers: ${b} − ${d} = ${num(B)}.`,`Answer: <b>${ans}</b>.`],
+   hint:`Circle the x-terms in one color and the plain numbers in another.`,tip:`Like terms = same letter. 3x and 5x are friends; 3x and 5 are not.`})}
+ if(L<=8){const neg=L>=7,a=neg?-R(2,6):R(2,6),b=R(2,7),c=R(1,9)*P([1,-1]),ans=lin(a*b,a*c);
+  const word=!neg&&c>0&&Math.random()<.5;
+  return build({text:word?`A ${s} merch bundle costs <b>(${lin(b,c)})</b> dollars. Write an expression for <b>${a}</b> bundles by simplifying <b>${a}(${lin(b,c)})</b>.`:`Simplify: <b>${num(a)}(${lin(b,c)})</b>`,answer:ans,fill:()=>lin(a*b+R(-3,3),a*c+R(-4,4)),wrong:[
+   {v:lin(a*b,c),why:`You multiplied only the first term. The ${num(a)} outside must multiply EVERY term inside: ${num(a)} × ${b}x AND ${num(a)} × ${pn(c)}.`},
+   {v:lin(a*b,-a*c),why:`Check the sign: ${num(a)} × ${pn(c)} = ${num(a*c)} (${(a<0)===(c<0)?'same signs → positive':'different signs → negative'}).`},
+   {v:neg?lin(-a*b,a*c):lin(a+b,a+c),why:neg?`The negative outside multiplies the x-term too: ${num(a)} × ${b}x = ${num(a*b)}x.`:`You added ${a} instead of multiplying. Distributing means MULTIPLY each term by ${a}.`}],
+   steps:[`Distribute: multiply ${num(a)} by each term inside.`,`${num(a)} × ${b}x = ${lin(a*b,0)}.`,`${num(a)} × ${pn(c)} = ${num(a*c)}.`,`Answer: <b>${ans}</b>.`],
+   hint:`The number outside high-fives EVERY term inside the parentheses. 🙌`,tip:`Distributive property: a(b + c) = ab + ac, everybody gets multiplied!`})}
+ const a=R(2,6);let c;do{c=R(2,5)}while(c===a);const b=R(1,8),d=R(1,8),A=a-c,B=a*b+c*d,ans=lin(A,B);
+ return build({text:`Simplify: <b>${a}(x + ${b}) − ${c}(x − ${d})</b>`,answer:ans,fill:()=>lin(A+R(-2,2),B+R(-5,5)),wrong:[
+  {v:lin(A,a*b-c*d),why:`−${c} × −${d} = +${c*d}. Two negatives multiply to a POSITIVE.`},
+  {v:lin(a+c,a*b-c*d),why:`You forgot to distribute the minus sign. The −${c} multiplies x too, giving −${c}x (not +${c}x).`},
+  {v:lin(A,a*b+d),why:`The −${c} must multiply BOTH terms in the second parentheses, including the −${d}.`}],
+  steps:[`Distribute ${a}: ${a}x + ${a*b}.`,`Distribute −${c}: −${c}x + ${c*d} (because −${c} × −${d} = +${c*d}).`,`Combine x-terms: ${a}x − ${c}x = ${lin(A,0)}.`,`Combine numbers: ${a*b} + ${c*d} = ${B}.`,`Answer: <b>${ans}</b>.`],
+  hint:`Treat it as + (−${c}) and distribute −${c} to both terms.`,tip:`Minus in front of parentheses? It flips the sign of EVERYTHING inside.`})}
+
+function gEq(L){const s=ST();
+ if(L<=2){const plus=Math.random()<.55,a=R(2,15);
+  if(plus){const x=R(1,30);
+   return build({text:Math.random()<.5?`${S.name} had some ${s} photocards. After a friend gave her <b>${a}</b> more, she had <b>${x+a}</b>. Solve <b>x + ${a} = ${x+a}</b> to find how many she started with.`:`Solve: <b>x + ${a} = ${x+a}</b>`,answer:num(x),wrong:[
+    {v:num(x+2*a),why:`You ADDED ${a} to both sides. To undo "+ ${a}", do the opposite: SUBTRACT ${a}.`},
+    {v:num(a),why:`${a} is the number being added, not x. Get x alone by subtracting ${a} from ${x+a}.`}],
+    steps:[`Goal: get x alone.`,`Undo "+ ${a}" by subtracting ${a} from both sides.`,`x = ${x+a} − ${a} = <b>${x}</b>.`,`Check: ${x} + ${a} = ${x+a} ✓`],
+    hint:`What's the opposite of adding ${a}?`,tip:`Solving equations = doing the OPPOSITE (inverse) operation to both sides.`})}
+  const x=R(-5,20);
+  return build({text:`Solve: <b>x − ${a} = ${num(x-a)}</b>`,answer:num(x),wrong:[
+   {v:num(x-2*a),why:`You SUBTRACTED ${a} again. To undo "− ${a}", ADD ${a} to both sides.`},
+   {v:num(-(x)),why:`Check the sign: ${num(x-a)} + ${a} = ${num(x)}.`}],
+   steps:[`Undo "− ${a}" by adding ${a} to both sides.`,`x = ${num(x-a)} + ${a} = <b>${num(x)}</b>.`,`Check: ${num(x)} − ${a} = ${num(x-a)} ✓`],
+   hint:`What's the opposite of subtracting ${a}?`,tip:`Inverse operations: + ↔ −, × ↔ ÷.`})}
+ if(L<=4){const a=R(2,12);let x;do{x=R(-9,12)}while(x===0||x===1);
+  if(Math.random()<.5){
+   return build({text:x>0&&Math.random()<.5?`${s} sold out <b>${a*x}</b> seats in <b>${a}</b> equal sections. Solve <b>${a}x = ${a*x}</b> to find the seats per section.`:`Solve: <b>${a}x = ${num(a*x)}</b>`,answer:num(x),wrong:[
+    {v:num(a*x-a),why:`You subtracted ${a}. But ${a}x means ${a} TIMES x, so undo it by DIVIDING by ${a}.`},
+    {v:num(a*a*x),why:`You multiplied by ${a}. To undo × ${a}, DIVIDE by ${a}.`}],
+    steps:[`${a}x means ${a} × x.`,`Undo × ${a} by dividing both sides by ${a}.`,`x = ${num(a*x)} ÷ ${a} = <b>${num(x)}</b>.`],
+    hint:`What's the opposite of multiplying by ${a}?`,tip:`The opposite of × is ÷.`})}
+  return build({text:`Solve: <b><span class="fr"><span>x</span><span>${a}</span></span> = ${num(x)}</b>`,answer:num(a*x),wrong:[
+   {v:num(x/a),why:`You divided by ${a}. But x is already being divided by ${a}, so undo it by MULTIPLYING by ${a}.`},
+   {v:num(x+a),why:`You added ${a}. x ÷ ${a} is undone by MULTIPLYING by ${a}.`}],
+   steps:[`x ÷ ${a} = ${num(x)}.`,`Undo ÷ ${a} by multiplying both sides by ${a}.`,`x = ${num(x)} × ${a} = <b>${num(a*x)}</b>.`],
+   hint:`What's the opposite of dividing by ${a}?`,tip:`The opposite of ÷ is ×.`})}
+ if(L<=7){const a=R(2,9);let x,b;do{x=R(-6,12);b=R(1,20)*P([1,-1])}while(x===0);const c=a*x+b,word=x>0&&b>0&&Math.random()<.5;
+  return build({text:word?`${s}'s online shop charges <b>$${a}</b> per keychain plus a <b>$${b}</b> shipping fee. ${S.name} paid <b>$${c}</b>. Solve <b>${a}x + ${b} = ${c}</b> to find how many keychains she bought.`:`Solve: <b>${lin(a,b)} = ${num(c)}</b>`,answer:num(x),wrong:[
+   {v:num((c+b)/a),why:`To undo "${sgn(b)} ${Math.abs(b)}" you need the OPPOSITE: ${b>0?'subtract':'add'} ${Math.abs(b)}. It looks like you ${b>0?'added':'subtracted'} instead.`},
+   {v:num(c/a-b),why:`You divided first. When solving, undo in REVERSE order: first undo the ${sgn(b)} ${Math.abs(b)}, then the × ${a}.`},
+   {v:num(c-b),why:`You undid the ${sgn(b)} ${Math.abs(b)} correctly (${a}x = ${num(c-b)}), but forgot the last step: divide by ${a}.`}],
+   steps:[`Undo ${sgn(b)} ${Math.abs(b)}: ${b>0?'subtract':'add'} ${Math.abs(b)} on both sides → ${a}x = ${num(c-b)}.`,`Undo × ${a}: divide both sides by ${a} → x = ${num(c-b)} ÷ ${a} = <b>${num(x)}</b>.`,`Check: ${a}(${num(x)}) ${sgn(b)} ${Math.abs(b)} = ${num(c)} ✓`],
+   hint:`Peel off the outside layer first: the ${sgn(b)} ${Math.abs(b)}.`,tip:`Two-step equations: undo + or − FIRST, then × or ÷. (Like taking off your jacket before your hoodie!)`})}
+ if(L===8){const a=R(3,9),cc=R(1,a-1),x=R(-5,10),b=R(-10,10),d=a*x+b-cc*x;
+  return build({text:`Solve: <b>${lin(a,b)} = ${lin(cc,d)}</b>`,answer:num(x),wrong:[
+   {v:num((d-b)/(a+cc)),why:`When you move ${lin(cc,0)} to the left side, you SUBTRACT it: ${a}x − ${cc}x = ${a-cc}x (not ${a+cc}x).`},
+   {v:num((d+b)/(a-cc)),why:`When you move the ${num(b)} to the right, do the opposite operation: ${num(d)} ${b>=0?'−':'+'} ${Math.abs(b)} = ${num(d-b)}.`},
+   {v:num(d-b),why:`You got ${a-cc}x = ${num(d-b)}. Almost there! Divide both sides by ${a-cc}.`}],
+   steps:[`Get the x-terms together: subtract ${lin(cc,0)} from both sides → ${lin(a-cc,b)} = ${num(d)}.`,b!==0?`Undo the ${num(b)}: ${lin(a-cc,0)} = ${num(d-b)}.`:`So ${lin(a-cc,0)} = ${num(d)}.`,`Divide by ${a-cc}: x = <b>${num(x)}</b>.`],
+   hint:`Move all the x's to one side first (subtract ${lin(cc,0)} from both sides).`,tip:`x on both sides? Collect them on the side with MORE x's.`})}
+ const a=R(2,6),x=R(-5,8),b=R(-10,10),c=-a*x+b,sym=P(['<','>','≤','≥']),F={'<':'>','>':'<','≤':'≥','≥':'≤'},ans=`x ${F[sym]} ${num(x)}`;
+ return build({text:`Solve: <b>${lin(-a,b)} ${sym==='<'?'&lt;':sym==='>'?'&gt;':sym} ${num(c)}</b>`,answer:ans,fill:()=>`x ${P(['<','>','≤','≥'])} ${num(x+R(-3,3))}`,wrong:[
+  {v:`x ${sym} ${num(x)}`,why:`So close! When you divide (or multiply) both sides of an inequality by a NEGATIVE number, you must FLIP the sign. ${sym} becomes ${F[sym]}.`},
+  {v:x!==0?`x ${F[sym]} ${num(-x)}`:null,why:`You flipped the sign correctly, but check the number: ${num(c-b)} ÷ (−${a}) = ${num(x)}.`},
+  {v:x!==0?`x ${sym} ${num(-x)}`:null,why:`Two slips: dividing by −${a} flips the inequality sign, and ${num(c-b)} ÷ (−${a}) = ${num(x)}.`}],
+  steps:[b!==0?`${b>0?'Subtract':'Add'} ${Math.abs(b)} on both sides → −${a}x ${sym} ${num(c-b)}.`:`It's already −${a}x ${sym} ${num(c)}.`,`Divide both sides by −${a}. Dividing by a negative FLIPS the sign! ${sym} → ${F[sym]}.`,`<b>${ans}</b>.`],
+  hint:`Watch out, you'll divide by a negative number. What happens to the inequality sign?`,tip:`Inequalities: × or ÷ by a NEGATIVE → flip the sign. 🔄`})}
+
+function gGeo(L){const s=ST();
+ if(L<=2){const b=R(3,16),h=R(2,14),ans=b*h/2;
+  return build({text:`A triangular banner for ${s}'s stage has a base of <b>${b} ft</b> and a height of <b>${h} ft</b>. What is its area?`,answer:num(ans)+' ft²',wrong:[
+   {v:num(b*h)+' ft²',why:`You did base × height, which is a RECTANGLE. A triangle is exactly HALF of that rectangle, so multiply by ½.`},
+   {v:num(b+h)+' ft²',why:`You added the base and height. Area means multiply: ½ × base × height.`},
+   {v:num(2*(b+h))+' ft²',why:`That's more like a perimeter (distance around). Area is the space inside: ½ × b × h.`}],
+   steps:[`Triangle area = ½ × base × height.`,`½ × ${b} × ${h} = ½ × ${b*h} = <b>${num(ans)} ft²</b>.`],
+   hint:`A triangle is half of a rectangle.`,tip:`Triangle area = ½ × b × h. Don't forget the half!`})}
+ if(L===3){const sup=Math.random()<.55,a=sup?R(20,160):R(15,75),o=(sup?180:90)-a;
+  return build({text:`Two spotlight beams make angles that are <b>${sup?'supplementary':'complementary'}</b>. One angle is <b>${a}°</b>. What is the other angle?`,answer:o+'°',wrong:[
+   {v:sup?(90-a>0?(90-a)+'°':null):(180-a)+'°',why:sup?`You used 90°. Complementary angles add to 90°, but SUPPLEMENTARY angles add to 180° (a straight line).`:`You used 180°. Supplementary is 180°, but COMPLEMENTARY angles add to 90° (a right-angle corner).`},
+   {v:(360-a)+'°',why:`360° is a full circle. ${sup?'Supplementary angles make a straight line: 180°.':'Complementary angles make a corner: 90°.'}`}],
+   steps:[`${sup?'Supplementary':'Complementary'} angles add up to ${sup?180:90}°.`,`${sup?180:90}° − ${a}° = <b>${o}°</b>.`],
+   hint:`Do ${sup?'supplementary':'complementary'} angles add to 90° or 180°?`,tip:`C comes before S, and 90 comes before 180: Complementary = Corner (90°), Supplementary = Straight (180°).`})}
+ if(L<=5){const r=R(2,15),gd=Math.random()<.5,C=3.14*2*r;
+  return build({text:`${s}'s circular stage has a ${gd?'diameter':'radius'} of <b>${gd?2*r:r} m</b>. What is its circumference? (Use π ≈ 3.14)`,answer:num(C)+' m',wrong:gd?[
+   {v:num(3.14*4*r)+' m',why:`You used 2 × diameter. The formula C = 2πr uses the RADIUS. With the diameter, just do C = π × d.`},
+   {v:num(3.14*r*r)+' m',why:`π × r² is the AREA formula (space inside). Circumference is the distance AROUND: π × d.`},
+   {v:num(3.14*r)+' m',why:`You used half the diameter with π × d. Use the full diameter: π × ${2*r}.`}]:[
+   {v:num(3.14*r)+' m',why:`You did π × r. Circumference is π × DIAMETER, and the diameter is 2 × ${r} = ${2*r}.`},
+   {v:num(3.14*r*r)+' m',why:`π × r² is the AREA formula. Circumference (distance around) is 2 × π × r.`},
+   {v:num(3.14*4*r)+' m',why:`You doubled one too many times. C = 2 × π × r = 2 × 3.14 × ${r}.`}],
+   steps:gd?[`Circumference = π × diameter.`,`3.14 × ${2*r} = <b>${num(C)} m</b>.`]:[`Circumference = 2 × π × radius (or π × diameter).`,`Diameter = 2 × ${r} = ${2*r}.`,`3.14 × ${2*r} = <b>${num(C)} m</b>.`],
+   hint:`Circumference = π × d. Do you have the diameter or the radius?`,tip:`Circumference = π·d (around). Area = π·r² (inside).`})}
+ if(L<=7){const r=R(2,12),gd=L===7,A=3.14*r*r;
+  return build({text:`A round dance floor at ${s}'s afterparty has a ${gd?'diameter':'radius'} of <b>${gd?2*r:r} ft</b>. What is its area? (Use π ≈ 3.14)`,answer:num(A)+' ft²',wrong:[
+   {v:num(3.14*2*r)+' ft²',why:`3.14 × ${2*r} is the CIRCUMFERENCE (distance around). Area uses π × r × r.`},
+   {v:gd?num(3.14*4*r*r)+' ft²':num(3.14*r)+' ft²',why:gd?`You used the diameter (${2*r}) instead of the radius. The radius is HALF the diameter: ${r}. Then π × ${r}².`:`You forgot to square the radius. r² means ${r} × ${r} = ${r*r}.`},
+   {v:num(3.14*2*r*2)+' ft²',why:`r² means r × r, not r × 2. ${r}² = ${r*r}.`}],
+   steps:[gd?`Radius = diameter ÷ 2 = ${2*r} ÷ 2 = ${r}.`:`Radius = ${r}.`,`Square it: ${r}² = ${r} × ${r} = ${r*r}.`,`Area = 3.14 × ${r*r} = <b>${num(A)} ft²</b>.`],
+   hint:`Area = π × r². ${gd?'You were given the diameter. What is the radius?':'Square the radius first.'}`,tip:`Area = π·r², always use the RADIUS (half the diameter).`})}
+ if(L===8){const l=R(2,12),w=R(2,10),h=R(2,10),V=l*w*h;
+  return build({text:`A box for ${s} albums is <b>${l} cm</b> long, <b>${w} cm</b> wide, and <b>${h} cm</b> tall. What is its volume?`,answer:V+' cm³',wrong:[
+   {v:(l+w+h)+' cm³',why:`You added the sides. Volume = length × width × height.`},
+   {v:(l*w)+' cm³',why:`That's just the area of the bottom (the base). Multiply by the height too to fill the whole box.`},
+   {v:(2*(l*w+l*h+w*h))+' cm³',why:`That's the SURFACE AREA (wrapping paper on the outside). Volume is the space INSIDE: l × w × h.`}],
+   steps:[`Volume of a box = length × width × height.`,`${l} × ${w} = ${l*w} (area of the base).`,`${l*w} × ${h} = <b>${V} cm³</b>.`],
+   hint:`How many 1 cm cubes fit inside? Multiply all three sides.`,tip:`Volume = base area × height. Units are CUBED (cm³).`})}
+ const T=P([[3,4,5],[5,12,13],[8,15,17],[6,8,10],[7,24,25],[9,12,15]]),k=T[2]<=13?P([1,2]):1,[a,b,c]=T.map(t=>t*k);
+ if(L===9)return build({text:`A lighting rig for ${s}'s tour is shaped like a right triangle. The two shorter sides (legs) are <b>${a} m</b> and <b>${b} m</b>. How long is the longest side (hypotenuse)?`,answer:c+' m',wrong:[
+   {v:(a+b)+' m',why:`You added the legs. In the Pythagorean theorem, square them first: ${a}² + ${b}² = c².`},
+   {v:(a*a+b*b)+' m',why:`You found c² = ${a*a+b*b}. Great! Last step: take the square root to get c.`},
+   {v:num(r2((a+b)/2*1.0))+' m',why:`Averaging doesn't work here. Use a² + b² = c².`}],
+   steps:[`Pythagorean theorem: a² + b² = c².`,`${a}² + ${b}² = ${a*a} + ${b*b} = ${a*a+b*b}.`,`c = √${a*a+b*b} = <b>${c} m</b>.`],
+   hint:`a² + b² = c². Don't forget the square root at the end!`,tip:`Pythagoras: a² + b² = c², where c is the longest side (across from the right angle).`});
+ return build({text:`A ramp to ${s}'s stage is a right triangle. The ramp (hypotenuse) is <b>${c} ft</b> long and the ground part is <b>${a} ft</b>. How tall is the ramp?`,answer:b+' ft',wrong:[
+  {v:num(r2(Math.sqrt(c*c+a*a)))+' ft',why:`You ADDED the squares. When you're missing a LEG (not the longest side), subtract: b² = c² − a².`},
+  {v:(c-a)+' ft',why:`You subtracted the lengths. Subtract their SQUARES instead: ${c*c} − ${a*a}, then take the square root.`},
+  {v:(c*c-a*a)+' ft',why:`You found b² = ${c*c-a*a}. Now take the square root!`}],
+  steps:[`a² + b² = c², so b² = c² − a².`,`${c}² − ${a}² = ${c*c} − ${a*a} = ${c*c-a*a}.`,`b = √${c*c-a*a} = <b>${b} ft</b>.`],
+  hint:`Missing a leg? b² = c² − a².`,tip:`Missing the long side → add squares. Missing a short side → subtract squares.`})}
+
+function gData(L){const s=ST();
+ if(L<=2){const n=P([4,5]);let list=null,m;
+  for(let t=0;t<80&&!list;t++){m=R(70,92);const l=Array.from({length:n-1},()=>R(60,100)),last=m*n-l.reduce((x,y)=>x+y,0);if(last>=55&&last<=100){l.push(last);list=shuffle(l)}}
+  if(!list){list=[78,82,80,80].slice(0,n);m=80;if(n===5)list.push(80)}
+  const sum=m*n,md=med(list);
+  return build({text:`${s}'s dance-practice scores this week were <b>${list.join(', ')}</b>. What's the mean (average) score?`,answer:num(m),wrong:[
+   {v:num(sum),why:`That's the total (sum). For the mean, divide the total by how many scores there are (${n}).`},
+   {v:num(sum/(n-1)),why:`You divided by ${n-1}, but there are ${n} scores. Count again!`},
+   {v:md!==m?num(md):null,why:`That's the MEDIAN (the middle value). The MEAN is total ÷ count.`}],
+   steps:[`Add them all: ${list.join(' + ')} = ${sum}.`,`Count them: ${n} scores.`,`Divide: ${sum} ÷ ${n} = <b>${m}</b>.`],
+   hint:`Mean = add them all up, then divide by how many.`,tip:`Mean = total ÷ count. Median = middle. Mode = most common.`})}
+ if(L<=4){const n=L===3?P([5,7]):6;let list;
+  do{list=Array.from({length:n},()=>R(1,40))}while(n%2?list[n>>1]===med(list):(()=>{const t=[...list].sort((a,b)=>a-b);return t[2]===t[3]})());
+  const md=med(list),sorted=[...list].sort((a,b)=>a-b),mean=list.reduce((a,b)=>a+b,0)/n;
+  return build({text:`Streams (in millions) of ${s}'s last ${n} songs: <b>${list.join(', ')}</b>. What's the median?`,answer:num(md),wrong:n%2?[
+   {v:num(list[n>>1]),why:`You picked the middle of the list as it was written. You have to put the numbers IN ORDER first, then find the middle.`},
+   {v:num(mean),why:`That's the MEAN (average). The median is the middle number after sorting.`},
+   {v:num(sorted[n-1]-sorted[0]),why:`That's the RANGE (biggest − smallest). Median = the middle value.`}]:[
+   {v:num(sorted[2]),why:`With an EVEN number of values there are TWO middle numbers (${sorted[2]} and ${sorted[3]}). The median is halfway between them.`},
+   {v:num((list[2]+list[3])/2),why:`You averaged the middle two from the UNSORTED list. Sort the numbers first!`},
+   {v:num(mean),why:`That's the MEAN (average). The median is the middle after sorting.`}],
+   steps:[`Put them in order: ${sorted.join(', ')}.`,n%2?`The middle one (position ${(n+1)/2}) is <b>${md}</b>.`:`Two middle numbers: ${sorted[2]} and ${sorted[3]}.`,...(n%2?[]:[`Halfway between: (${sorted[2]} + ${sorted[3]}) ÷ 2 = <b>${num(md)}</b>.`])],
+   hint:`Step 1: sort from smallest to biggest!`,tip:`Median = Middle (both have a "d" and mean the middle of the road 🛣️). Always sort first.`})}
+ if(L<=6){const r=R(2,8),g=R(2,8),k=L===6?R(1,6):0,tot=r+g+k,ans=new Fr(r,tot);
+  return build({text:`A bag has <b>${r} pink</b>, <b>${g} purple</b>${k?`, and <b>${k} mint</b>`:''} lightsticks for ${s}'s concert. ${S.name} grabs one without looking. What's the probability it's pink?`,answer:ans.toString(),fill:fracFill(ans),wrong:[
+   {v:new Fr(r,tot-r),why:`You compared pink to the NON-pink ones (${r} to ${tot-r}). Probability compares pink to ALL of them: ${r} out of ${tot}.`},
+   {v:new Fr(g,tot),why:`That's the probability of purple. The question asks for pink.`},
+   {v:new Fr(1,tot),why:`That's the chance of one specific lightstick. There are ${r} pink ones, so ${r} chances out of ${tot}.`}],
+   steps:[`Total lightsticks: ${r} + ${g}${k?` + ${k}`:''} = ${tot}.`,`Pink ones (what we want): ${r}.`,`P(pink) = ${r}/${tot}${ans.toString()!==`${r}/${tot}`?` = <b>${ans}</b>`:` → <b>${ans}</b>`}.`],
+   hint:`Probability = (what you want) ÷ (total possible).`,tip:`Probability = favorable ÷ TOTAL. It's always between 0 and 1.`})}
+ if(L<=8){const n=P([4,5,6,8]),k=R(1,Math.min(3,n-1)),p1=new Fr(k,n);
+  const ev=P([{t:'the coin lands on heads',p:new Fr(1,2),d:'flips a coin'},{t:'the die shows an even number',p:new Fr(1,2),d:'rolls a die'},{t:'the die shows a 5 or 6',p:new Fr(1,3),d:'rolls a die'},{t:'the die shows a 6',p:new Fr(1,6),d:'rolls a die'}]);
+  const ans=p1.mul(ev.p);
+  return build({text:`A spinner has <b>${n} equal sections</b>; <b>${k}</b> of them ${k>1?'are':'is'} labeled "${s}". ${S.name} spins it and also ${ev.d}. What's the probability she lands on "${s}" AND ${ev.t}?`,answer:ans.toString(),fill:fracFill(ans),wrong:[
+   {v:p1.add(ev.p),why:`You added the probabilities. When BOTH things must happen (AND) and they don't affect each other, MULTIPLY them.`},
+   {v:new Fr(k+ev.p.n,n+ev.p.d),why:`You added the tops and bottoms. For "AND", multiply: ${p1} × ${ev.p}.`},
+   {v:p1,why:`That's only the spinner part. She also needs ${ev.t}, so multiply by ${ev.p}.`}],
+   steps:[`P(${s}) = ${k}/${n}${p1.toString()!==`${k}/${n}`?` = ${p1}`:''}.`,`P(${ev.t.replace('the ','')}) = ${ev.p}.`,`AND → multiply: ${p1} × ${ev.p} = <b>${ans}</b>.`],
+   hint:`"AND" with independent events → multiply the probabilities.`,tip:`AND → multiply ✖️. OR (can't both happen) → add ➕.`})}
+ const N=R(6,10),r=R(2,4),ans=new Fr(r*(r-1),N*(N-1));
+ return build({text:`${S.name} has <b>${N}</b> photocards face-down. <b>${r}</b> of them are rare ${s} cards. She picks two, one after the other, WITHOUT putting the first one back. What's the probability BOTH are rare?`,answer:ans.toString(),fill:fracFill(ans),wrong:[
+  {v:new Fr(r*r,N*N),why:`That's WITH replacement (putting the card back). Without replacement, after the first rare card is taken there's 1 fewer rare card AND 1 fewer card total.`},
+  {v:new Fr(r*r,N*(N-1)),why:`You remembered the total goes down to ${N-1}. Nice! But the rare cards go down too: ${r-1} left.`},
+  {v:new Fr(r,N).add(new Fr(r-1,N-1)),why:`You added. For "first AND second", multiply the probabilities.`}],
+  steps:[`First pick: ${r}/${N} chance of rare.`,`Now one rare card is gone: ${r-1} rare left out of ${N-1} cards → ${r-1}/${N-1}.`,`Multiply: ${r}/${N} × ${r-1}/${N-1} = ${r*(r-1)}/${N*(N-1)}${ans.toString()!==`${r*(r-1)}/${N*(N-1)}`?` = <b>${ans}</b>`:''}.`],
+  hint:`After the first rare card is picked, how many rare cards and total cards are left?`,tip:`Without replacement → the second fraction changes (top AND bottom go down).`})}
+
+const TOPICS=[
+ {id:'prop',name:'Proportional Relationships',emoji:'💫',color:'#7c9cff',gen:gProp,skills:['Unit rate from a table','Unit rate from a table','Missing values in a table','Missing values in a table','Finding k from a table','Writing y = kx','Is it proportional?','Reading a proportional graph','Unit rates with fractions','Comparing proportional relationships']},
+ {id:'int',name:'Integers',emoji:'🌡️',color:'#38bdf8',gen:gInt,skills:['Adding negatives','Adding negatives','Subtracting negatives','Multiplying integers','Dividing integers','Dividing integers','Order of operations','Order of operations','Exponents & negatives','Exponents & negatives']},
+ {id:'frac',name:'Fractions',emoji:'🍕',color:'#ff8a3d',gen:gFrac,skills:['Adding like fractions','Adding unlike fractions','Adding unlike fractions','Fraction of a number','Multiplying fractions','Dividing fractions','Dividing fractions','Negative fractions','Dividing negative fractions','Dividing negative fractions']},
+ {id:'ratio',name:'Ratios & Rates',emoji:'🎟️',color:'#2ee6b6',gen:gRatio,skills:['Unit price','Unit price','Proportions','Proportions','Proportions','Ratio sharing','Ratio sharing','Constant of proportionality','Constant of proportionality','Constant of proportionality']},
+ {id:'pct',name:'Percents',emoji:'🛍️',color:'#ff4fa3',gen:gPct,skills:['Percent of a number','Percent of a number','Discounts','Discounts','Tax & tips','Tax & tips','Percent change','Percent change','Working backwards','Working backwards']},
+ {id:'expr',name:'Expressions',emoji:'🧩',color:'#a855f7',gen:gExpr,skills:['Evaluating expressions','Evaluating expressions','Combining like terms','Combining like terms','Distributive property','Distributive property','Distributing negatives','Distributing negatives','Distribute & combine','Distribute & combine']},
+ {id:'eq',name:'Equations',emoji:'⚖️',color:'#fbbf24',gen:gEq,skills:['One-step (+/−)','One-step (+/−)','One-step (×/÷)','One-step (×/÷)','Two-step equations','Two-step equations','Two-step equations','Variables on both sides','Inequalities','Inequalities']},
+ {id:'geo',name:'Geometry',emoji:'📐',color:'#6ee7ff',gen:gGeo,skills:['Triangle area','Triangle area','Angle pairs','Circumference','Circumference','Circle area','Circle area (diameter)','Volume','Pythagorean theorem','Pythagorean theorem']},
+ {id:'data',name:'Probability & Stats',emoji:'🎲',color:'#f472b6',gen:gData,skills:['Mean','Mean','Median','Median (even count)','Probability','Probability','Compound probability','Compound probability','Without replacement','Without replacement']},
+];
+const TP=Object.fromEntries(TOPICS.map(t=>[t.id,t]));
+const gradeOf=l=>{l=Math.round(l);return l<=2?'Grade 5':l<=4?'Grade 6':l<=7?'Grade 7':'Grade 8'};
+const gradeNum=l=>{l=Math.round(l);return l<=2?5:l<=4?6:l<=7?7:8};
+const RANKS=[[0,'Trainee','🐣'],[100,'Rookie','🎧'],[300,'Rising Star','⭐'],[600,'Idol','🎤'],[1000,'Headliner','🎸'],[1600,'Superstar','🌟'],[2500,'Legend','👑']];
+const rankOf=xp=>{let i=0;RANKS.forEach((r,j)=>{if(xp>=r[0])i=j});return{i,r:RANKS[i],next:RANKS[i+1]}};
+
+/* =========================================================
+   State
+   ========================================================= */
+const KEY='mmMayasMath.v1';
+function fresh(){return{name:'Maya',stars:['Freya Skye','Harry Styles','Taylor Swift','KATSEYE'],color:'pink',placed:false,skills:Object.fromEntries(TOPICS.map(t=>[t.id,{lvl:5,att:0,ok:0,recent:[]}])),xp:0,fans:0,best:0,cards:[],nextCard:60,mistakes:[],sound:true,days:0,lastDay:null,sessions:0,history:[],videos:[],log:[],watched:[],focus:'prop'}}
+let S;try{S=Object.assign(fresh(),JSON.parse(localStorage.getItem(KEY)||'null')||{})}catch(e){S=fresh()}
+if(!Array.isArray(S.videos))S.videos=[];if(!Array.isArray(S.log))S.log=[];if(!Array.isArray(S.watched))S.watched=[];if(!S.focus)S.focus='prop';
+TOPICS.forEach(t=>{if(!S.skills[t.id])S.skills[t.id]={lvl:5,att:0,ok:0,recent:[]}});
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const overall=()=>TOPICS.reduce((a,t)=>a+S.skills[t.id].lvl,0)/TOPICS.length;
+
+function applyTheme(){const c=STICKS[S.color]||STICKS.pink;document.documentElement.style.setProperty('--a',c[0]);document.documentElement.style.setProperty('--a2',c[1]);}
+
+/* =========================================================
+   Sound + FX
+   ========================================================= */
+let AC;
+function tone(f,t,d,type='triangle',v=.12){const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+.05)}
+function sfx(k){if(!S.sound)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const n=AC.currentTime;
+ if(k==='ok')[523,659,784,1047].forEach((f,i)=>tone(f,n+i*.07,.25));
+ if(k==='bad'){tone(392,n,.25,'sine',.1);tone(311,n+.18,.35,'sine',.1)}
+ if(k==='card')[784,988,1175,1568,1976].forEach((f,i)=>tone(f,n+i*.06,.4,'sine',.09));
+ if(k==='lvl')[523,784,1047,784,1047,1319].forEach((f,i)=>tone(f,n+i*.09,.3,'square',.05));
+ if(k==='tap')tone(880,n,.06,'sine',.05)}catch(e){}}
+const cv=$('#fx'),cx=cv.getContext('2d');let parts=[];
+function sizeCv(){cv.width=innerWidth;cv.height=innerHeight}addEventListener('resize',sizeCv);sizeCv();
+function confetti(n=120){const cols=[getComputedStyle(document.documentElement).getPropertyValue('--a'),getComputedStyle(document.documentElement).getPropertyValue('--a2'),'#ffd36e','#fff','#2ee6b6'];
+ for(let i=0;i<n;i++)parts.push({x:innerWidth/2+R(-80,80),y:innerHeight*.45,vx:(Math.random()-.5)*16,vy:-Math.random()*16-4,s:R(5,11),c:P(cols),r:Math.random()*6,vr:(Math.random()-.5)*.4,life:120,t:Math.random()<.15?P(['♪','♫','★','💜']):null});
+ if(parts.length===n)loop()}
+function loop(){cx.clearRect(0,0,cv.width,cv.height);parts=parts.filter(p=>p.life-->0);
+ for(const p of parts){p.vy+=.45;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.globalAlpha=Math.min(1,p.life/40);
+  if(p.t){cx.font='20px sans-serif';cx.fillStyle=p.c;cx.fillText(p.t,0,0)}else{cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2)}cx.restore()}
+ if(parts.length)requestAnimationFrame(loop);else cx.clearRect(0,0,cv.width,cv.height)}
+function toast(msg,ms=2600){const t=document.createElement('div');t.className='toast';t.innerHTML=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),ms)}
+(function notes(){const n=$('#notes');for(let i=0;i<16;i++){const s=document.createElement('span');s.textContent=P(['♪','♫','♬','✦','★','♡']);s.style.left=R(0,100)+'vw';s.style.fontSize=R(14,30)+'px';s.style.animationDuration=R(12,26)+'s';s.style.animationDelay=-R(0,26)+'s';n.appendChild(s)}})();
+
+/* =========================================================
+   Screens
+   ========================================================= */
+const SCREENS=['onboard','home','quiz','results','progress','practice','cards','videos','report'];
+function show(id){SCREENS.forEach(s=>$('#s-'+s).classList.toggle('hidden',s!==id));scrollTo({top:0,behavior:'smooth'});renderHeader()}
+function renderHeader(){const rk=rankOf(S.xp);
+ $('#hstats').innerHTML=S.stars.length?`<span class="pill" title="Rank">${rk.r[2]} ${rk.r[1]}</span><span class="pill" title="XP">✨ ${S.xp} XP</span><span class="pill opt" title="Fans">💜 ${S.fans.toLocaleString()}</span><span class="pill opt" title="Day streak">🔥 ${S.days}</span><button class="iconbtn" title="Settings" onclick="openSettings()">⚙️</button>`:''}
+
+/* ----- onboarding ----- */
+let obSel=new Set(),obColor='pink';
+function openOnboard(){obSel=new Set(S.stars);obColor=S.color;renderOb();$('#obGo').textContent=S.placed?'Save changes 💾':'Start my Audition 🎤';show('onboard')}
+function renderOb(){
+ const chip=n=>`<button class="art ${obSel.has(n)?'on':''}" onclick="togArt(this,'${n.replace(/'/g,"\\'")}')">${esc(n)}</button>`;
+ $('#kpop').innerHTML=KPOP.map(chip).join('');$('#pop').innerHTML=POP.map(chip).join('');
+ $('#custom').innerHTML=[...obSel].filter(n=>!KPOP.includes(n)&&!POP.includes(n)).map(chip).join('');
+ $('#sticks').innerHTML=Object.entries(STICKS).map(([k,c])=>`<button class="stick ${obColor===k?'on':''}" onclick="obColor='${k}';S.color='${k}';applyTheme();renderOb()" style="--sc:${c[0]}"><span class="orb"></span><span class="rod"></span>${k}</button>`).join('')}
+function togArt(el,n){obSel.has(n)?obSel.delete(n):obSel.add(n);sfx('tap');renderOb()}
+function addCustom(){const v=$('#customArt').value.replace(/[<>&"]/g,'').trim();if(v){obSel.add(v);$('#customArt').value='';renderOb()}}
+$('#customArt').addEventListener('keydown',e=>{if(e.key==='Enter')addCustom()});
+function finishOnboard(){if(!obSel.size){toast('Pick at least one artist 💜');return}
+ S.name='Maya';S.stars=[...obSel];S.color=obColor;save();applyTheme();
+ if(S.placed)goHome();else startSession('audition')}
+
+/* ----- home ----- */
+function goHome(){if(!S.stars.length)return openOnboard();if(sess&&!sess.done&&!$('#s-quiz').classList.contains('hidden')){if(!confirm('Leave this set? Your progress so far is saved.'))return;sess=null}
+ const rk=rankOf(S.xp),pct=rk.next?((S.xp-rk.r[0])/(rk.next[0]-rk.r[0]))*100:100,ov=overall();
+ const weak=TP[S.focus]||[...TOPICS].sort((a,b)=>S.skills[a.id].lvl-S.skills[b.id].lvl)[0];
+ const hr=new Date().getHours(),greet=hr<12?'Good morning':hr<18?'Hey':'Good evening';
+ $('#s-home').innerHTML=`
+ <div class="welcome">
+  <div class="panel rankcard">
+   <div class="mut fd" style="font-size:16px">${greet}, superstar ✨</div>
+   <h2 class="fd">${esc(S.name)}</h2>
+   <div class="rankbadge">${rk.r[2]} ${rk.r[1]}</div>
+   <div class="mt" style="display:flex;justify-content:space-between;font-weight:800;font-size:14px"><span>${S.xp} XP</span><span class="mut">${rk.next?`${rk.next[0]-S.xp} XP to ${rk.next[2]} ${rk.next[1]}`:'MAX RANK 👑'}</span></div>
+   <div class="bar" style="margin-top:6px"><b style="width:${pct}%"></b></div>
+   <div class="big" style="position:absolute;right:10px;top:4px;font-size:90px;opacity:.15">${rk.r[2]}</div>
+  </div>
+  <div class="panel">
+   <div class="stats3">
+    <div class="stat"><div class="n">${S.placed?gradeNum(ov):'?'}</div><div class="l">Grade level</div></div>
+    <div class="stat"><div class="n">${S.days}🔥</div><div class="l">Day streak</div></div>
+    <div class="stat"><div class="n">${S.cards.length}</div><div class="l">Photocards</div></div>
+   </div>
+   <div class="mut mt" style="font-weight:700;font-size:14px">💜 <b style="color:#fff">${S.fans.toLocaleString()}</b> fans · Best streak <b style="color:#fff">${S.best}</b> in a row</div>
+   <div class="mut" style="font-weight:700;font-size:14px;margin-top:4px">🎤 Bias list: ${S.stars.slice(0,4).map(esc).join(', ')}${S.stars.length>4?' + more':''}</div>
+  </div>
+ </div>
+ ${!S.placed?`
+ <div class="panel audition">
+  <div class="mic">🎤</div>
+  <h2 class="fd">Your Audition is ready!</h2>
+  <p class="mut" style="font-size:17px;max-width:520px;margin:10px auto 0">${TOPICS.length*2} quick questions across all the 7th-grade topics. No pressure! The questions get easier or harder based on your answers so we can find your perfect starting level.</p>
+  <button class="btn mt2" onclick="startSession('audition')">Start Audition ▶</button>
+ </div>`:`
+ <div class="focus"><span style="font-size:32px">${weak.emoji}</span><div style="flex:1"><div class="fd" style="font-weight:600;font-size:18px">Class focus: ${weak.name}</div><div class="mut" style="font-weight:700;font-size:14px">Working on: ${weak.skills[Math.floor(S.skills[weak.id].lvl)-1]} · ${gradeOf(S.skills[weak.id].lvl)} level</div></div><button class="btn small" onclick="startSession('practice','${weak.id}')">Practice ▶</button></div>
+ <div class="tiles">
+  <button class="tile" style="--tbg:linear-gradient(135deg,color-mix(in srgb,var(--a) 55%,#1a0b38),color-mix(in srgb,var(--a2) 45%,#1a0b38))" onclick="startSession('tour')"><span class="em">🌍</span><h3 class="fd">World Tour</h3><p>A 10-track set mixing every topic, tuned to your level. Gets harder as you level up!</p><span class="big">🌍</span></button>
+  <button class="tile" style="--tbg:linear-gradient(135deg,#0e6b73,#1a0b38)" onclick="openPractice()"><span class="em">🎧</span><h3 class="fd">Practice Room</h3><p>Pick one topic and train it like a choreo you want to nail.</p><span class="big">🎧</span></button>
+  <button class="tile" style="--tbg:linear-gradient(135deg,#7a4a00,#1a0b38)" onclick="openProgress()"><span class="em">📈</span><h3 class="fd">My Progress</h3><p>See your level in every topic and your path forward.</p><span class="big">📈</span></button>
+  <button class="tile" style="--tbg:linear-gradient(135deg,#7a1550,#1a0b38)" onclick="openCards()"><span class="em">💳</span><h3 class="fd">Photocards</h3><p>${S.cards.length} collected · next one in ${Math.max(0,S.nextCard-S.xp)} XP</p><span class="big">💳</span></button>
+  <button class="tile" style="--tbg:linear-gradient(135deg,#8a1c1c,#1a0b38);grid-column:1/-1;min-height:130px" onclick="openVideos()"><span class="em">🎬</span><h3 class="fd">VIP Video Lounge</h3><p>${S.videos.length} of ${MUSIC.length} music videos unlocked · score 70%+ on a set to unlock the next one!</p><span class="big">🎬</span></button>
+ </div>`}`;
+ show('home')}
+
+/* ----- sessions ----- */
+let sess=null,cur=null,retry=null,lastTopic=null;
+function startSession(mode,topic){
+ if(mode==='audition'){TOPICS.forEach(t=>{S.skills[t.id].lvl=5});}
+ sess={mode,topic,total:mode==='audition'?TOPICS.length*2:mode==='tour'?10:8,i:0,log:[],streak:0,seen:{},queue:mode==='audition'?shuffle(TOPICS.map(t=>t.id)).concat(shuffle(TOPICS.map(t=>t.id))):[],xp0:S.xp,lv0:Object.fromEntries(TOPICS.map(t=>[t.id,S.skills[t.id].lvl])),newCards:[],done:false};
+ retry=null;lastTopic=null;show('quiz');next()}
+function pickTopic(){
+ if(sess.mode==='audition')return sess.queue[sess.i];
+ if(sess.mode==='practice')return sess.topic;
+ if(retry){const t=retry;retry=null;return t}
+ const ids=TOPICS.map(t=>t.id),ws=ids.map(id=>id===lastTopic?.15:(1+Math.max(0,7.5-S.skills[id].lvl)*.5)*(id===S.focus?3.5:1));
+ let x=Math.random()*ws.reduce((a,b)=>a+b,0);for(let i=0;i<ids.length;i++){x-=ws[i];if(x<=0)return ids[i]}return ids[0]}
+function next(){
+ if(sess.i>=sess.total)return finish();
+ const t=pickTopic(),remix=sess.remixNext===t;sess.remixNext=null;
+ let L=Math.round(S.skills[t].lvl),stretch=false;
+ if(sess.mode!=='audition'&&!remix&&Math.random()<.22&&L<10){L++;stretch=true}
+ L=clamp(L,1,10);sess.seen[t]=(sess.seen[t]||0)+1;
+ let q,tries=0;do{q=TP[t].gen(L)}while(q.choices.length<3&&tries++<5);
+ cur=Object.assign(q,{topic:t,level:L,stretch,remix,answered:false,hinted:false,t0:Date.now()});lastTopic=t;renderQ()}
+function renderQ(){const q=cur,T=TP[q.topic];
+ $('#qmode').innerHTML=(sess.mode==='audition'?'🎤 Audition':sess.mode==='tour'?'🌍 World Tour':`🎧 Practice Room · ${T.name}`)+` <span class="mut" style="font-size:15px">· Track ${sess.i+1} of ${sess.total}</span>`;
+ $('#setlist').innerHTML=Array.from({length:sess.total},(_,i)=>`<i class="${i<sess.log.length?(sess.log[i].ok?'ok':'no'):i===sess.i?'now':''}"></i>`).join('');
+ $('#cells').innerHTML=Array.from({length:5},(_,i)=>`<i class="${i<Math.min(5,sess.streak)?'on':''}"></i>`).join('');
+ $('#qcard').innerHTML=`
+  <div class="qtop"><span class="chip" style="--c:${T.color}">${T.emoji} ${T.name}</span><span class="chip" style="--c:#8b8bff">Lv ${q.level} · ${gradeOf(q.level)}</span>${q.stretch?'<span class="chip hot">🔥 Challenge track</span>':''}${q.remix?'<span class="chip remix">🔁 Remix: a similar one to lock it in</span>':''}</div>
+  <div class="qtext">${pretty(q.text)}</div>
+  <div class="choices">${q.choices.map((c,i)=>`<button class="choice" data-i="${i}" onclick="answer(${i})"><span class="let">${'ABCD'[i]}</span><span>${pretty(c.v)}</span></button>`).join('')}</div>
+  <div class="qtools"><button class="btn ghost small" id="hintBtn" onclick="showHint()">💡 Need a hint?</button><span class="mut" style="font-size:13px;font-weight:700">Tip: press A-D or 1-4</span></div>
+  <div id="hintBox" class="hint hidden">💡 ${pretty(q.hint)}</div>
+  <div id="fb"></div>`}
+function showHint(){if(cur.answered)return;cur.hinted=true;$('#hintBox').classList.remove('hidden');$('#hintBtn').disabled=true}
+function answer(i){const q=cur;if(!q||q.answered)return;q.answered=true;const c=q.choices[i],ok=!!c.ok,T=TP[q.topic],sk=S.skills[q.topic];
+ document.querySelectorAll('.choice').forEach((b,j)=>{b.disabled=true;if(q.choices[j].ok)b.classList.add('right');else if(j===i)b.classList.add('wrong');else b.classList.add('dim')});
+ $('#hintBtn').disabled=true;
+ // ---- adaptive level update ----
+ const before=sk.lvl;sk.att++;if(ok)sk.ok++;sk.recent.push(ok?1:0);if(sk.recent.length>10)sk.recent.shift();
+ let d;if(sess.mode==='audition'){const n=sess.seen[q.topic];d=ok?(n===1?2:1.25):(n===1?-2:-1.25)}
+ else{d=ok?(q.hinted?.15:q.stretch?.6:.4):-.5;const l3=sk.recent.slice(-3);if(ok&&!q.hinted&&l3.length===3&&l3.every(x=>x))d+=.2}
+ sk.lvl=clamp(+(sk.lvl+d).toFixed(2),1,10);
+ // ---- rewards ----
+ let gained=0,fans=0;
+ if(ok){sess.streak++;S.best=Math.max(S.best,sess.streak);gained=Math.round((10+q.level)*(q.hinted?.5:1))+(sess.streak>=3?5:0)+(q.stretch?5:0);fans=R(50,120)*q.level;S.xp+=gained;S.fans+=fans;sfx('ok');confetti(sess.streak>=3?160:90)}
+ else{sess.streak=0;sfx('bad');S.mistakes.unshift({t:q.topic,q:(q.short||q.text).replace(/<[^>]+>/g,''),you:c.v,ans:q.answer,why:c.why||'',d:Date.now()});S.mistakes=S.mistakes.slice(0,80);
+  if(sess.mode==='tour'){retry=q.topic;sess.remixNext=q.topic}else if(sess.mode==='practice')sess.remixNext=q.topic}
+ while(S.xp>=S.nextCard){const card=makeCard();S.cards.push(card);sess.newCards.push(card);S.nextCard+=60;setTimeout(()=>{sfx('card');toast(`💳 New photocard unlocked: ${esc(card.star)}!`)},700)}
+ if(sess.mode!=='audition'&&Math.floor(sk.lvl)>Math.floor(before)&&ok){setTimeout(()=>{sfx('lvl');toast(`⬆️ Level up! ${T.emoji} ${T.name} is now Lv ${Math.floor(sk.lvl)}`)},400)}
+ sess.log.push({t:q.topic,ok,L:q.level,q:q.short||q.text,you:c.v,ans:q.answer,why:c.why});
+ q.entry={d:Date.now(),t:q.topic,L:q.level,ok:ok?1:0,h:q.hinted?1:0,r:q.remix?1:0,s:q.stretch?1:0,m:sess.mode[0],sec:Math.round(Math.min(180,(Date.now()-q.t0)/1000))};q.t1=Date.now();
+ S.log.push(q.entry);if(S.log.length>8000)S.log=S.log.slice(-8000);
+ save();renderHeader();
+ const s=ST(),steps=`<div class="steps"><div class="why t" style="all:unset;font-family:Fredoka;font-size:15px;text-transform:uppercase;letter-spacing:1px;color:var(--mut)">How to solve it</div><ol>${q.steps.map(x=>`<li>${pretty(x)}</li>`).join('')}</ol></div>`;
+ const last=sess.i+1>=sess.total;
+ $('#fb').innerHTML=ok?`
+  <div class="fb good"><h3 class="fd">${P(['PERFECT!','NAILED IT!','SLAY!','ICONIC!','YES!!'])} 🎉 <span class="xp">+${gained} XP</span></h3>
+   <div style="font-weight:800;margin-top:6px">${P(CHEERS)(esc(s))}${sess.streak>=3?` <span style="color:var(--gold)">🔥 ${sess.streak} in a row!</span>`:''}</div>
+   <details class="mt"><summary style="cursor:pointer;font-weight:800" class="mut">See the steps</summary>${steps}</details>
+   <div class="center mt"><button class="btn" id="nextBtn" onclick="advance()">${last?'See my results 🏆':'Next track ▶'}</button></div></div>`
+ :`<div class="fb oops"><h3 class="fd">${P(OOPS)}</h3>
+   <div class="why"><div class="t">What happened</div>You picked <b style="color:var(--bad)">${pretty(c.v)}</b>. ${c.why?pretty(c.why):`That one doesn't match. Let's walk through it step by step to see where it goes off-beat.`}</div>
+   <div class="why blue"><div class="t">The right answer</div><b style="color:var(--ok);font-size:20px">${pretty(q.answer)}</b></div>
+   ${steps}
+   <div class="tip">⭐ Remember: ${pretty(q.tip)}</div>
+   ${(()=>{const ls=lessonFor(q.topic,q.level);return ls?`<button class="lesson" onclick="playVideo('${ls.id}')"><span class="lt" style="background-image:url(${thumb(ls.id)})"></span><span><span class="mut" style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:1px">🎬 Want a quick video lesson?</span><br><b>${ls.t}</b><br><span class="mut" style="font-size:13px;font-weight:700">Khan Academy · a few minutes</span></span></button>`:''})()}
+   <div class="center mt"><button class="btn" id="nextBtn" onclick="advance()">${last?'See my results 🏆':'Got it! Next track ▶'}</button></div></div>`;
+ setTimeout(()=>$('#fb').scrollIntoView({behavior:'smooth',block:'nearest'}),150)}
+function advance(){if(cur&&cur.entry&&cur.t1){cur.entry.sec+=Math.round(Math.min(120,(Date.now()-cur.t1)/1000));cur.t1=null;save()}sess.i++;next()}
+function quitSession(){if(confirm('Leave this set? Your progress so far is saved.')){sess=null;goHome()}}
+document.addEventListener('keydown',e=>{if($('#s-quiz').classList.contains('hidden')||!cur||e.target.tagName==='INPUT')return;
+ const k=e.key.toLowerCase(),m={a:0,b:1,c:2,d:3,'1':0,'2':1,'3':2,'4':3};
+ if(!cur.answered&&k in m&&m[k]<cur.choices.length)answer(m[k]);else if(cur.answered&&(k==='enter'||k===' ')){e.preventDefault();advance()}});
+
+function finish(){sess.done=true;S.sessions++;if(sess.mode==='audition')S.placed=true;
+ const today=new Date().toDateString(),y=new Date(Date.now()-864e5).toDateString();
+ if(S.lastDay!==today){S.days=S.lastDay===y?S.days+1:1;S.lastDay=today}
+ S.history.push({d:Date.now(),l:+overall().toFixed(2),m:sess.mode,n:sess.total,ok:sess.log.filter(x=>x.ok).length,lv:Object.fromEntries(TOPICS.map(t=>[t.id,+S.skills[t.id].lvl.toFixed(2)]))});S.history=S.history.slice(-1500);
+ const okRate=sess.log.filter(x=>x.ok).length/sess.total,vid=(sess.mode==='audition'||okRate>=.7)?unlockVideo():null;save();
+ const okN=sess.log.filter(x=>x.ok).length,xp=S.xp-sess.xp0,ov=overall(),isA=sess.mode==='audition';
+ const touched=[...new Set(sess.log.map(x=>x.t))];
+ const sorted=[...TOPICS].sort((a,b)=>S.skills[b.id].lvl-S.skills[a.id].lvl);
+ const misses=sess.log.filter(x=>!x.ok);
+ if(okN/sess.total>=.6)setTimeout(()=>confetti(220),300);
+ $('#s-results').innerHTML=`
+ <div class="hero"><div class="mic">${isA?'🎤':okN/sess.total>=.8?'🏆':okN/sess.total>=.5?'🌟':'💪'}</div>
+  <h1 class="grad">${isA?'Your Debut Report':okN/sess.total>=.8?'Standing ovation!':okN/sess.total>=.5?'Great show!':'Every star rehearses!'}</h1>
+  <p class="mut">${okN} of ${sess.total} correct · +${xp} XP${sess.newCards.length?` · ${sess.newCards.length} new photocard${sess.newCards.length>1?'s':''} 💳`:''}</p></div>
+ ${vid?`<div class="panel mt" style="border-color:var(--gold)"><h2 class="fd" style="font-size:24px">🎬 Reward unlocked: ${esc(vid.a)}, "${esc(vid.t)}"</h2><p class="mut" style="font-weight:700;margin:4px 0 12px">${isA?'Thanks for nailing your audition!':'You scored 70% or more, so you earned a music video!'} It's saved in your VIP Video Lounge.</p><div class="vthumb" style="background-image:url(${thumb(vid.id)})" onclick="playVideo('${vid.id}')"></div></div>`
+  :(!isA&&S.videos.length<MUSIC.length?`<div class="panel mt center"><b>🎬 Score 70% or more on your next set to unlock a new music video!</b></div>`:'')}
+ ${isA?`<div class="panel mt"><h2 class="fd" style="font-size:24px">🎯 Starting level: about <span class="grad">${gradeOf(ov)}</span> overall</h2>
+  <p class="mut" style="font-weight:700;margin-top:6px">${gradeNum(ov)>=7?`${esc(S.name)} is right where a 7th grader should be, or ahead! We'll keep pushing toward 8th-grade skills.`:`We found some skills to warm up first. The app will start here and climb toward grade 7 and beyond, one level at a time.`}</p>
+  <div class="mt">${sorted.map(t=>levelRow(t,sess.lv0[t.id])).join('')}</div>
+  <div class="grid2 mt"><div class="mistake">💪 <b>Strongest:</b> ${sorted.slice(0,2).map(t=>t.emoji+' '+t.name).join(', ')}</div><div class="mistake">🎯 <b>Focus next:</b> ${sorted.slice(-2).reverse().map(t=>t.emoji+' '+t.name).join(', ')}</div></div></div>`
+ :`<div class="panel mt"><h2 class="fd" style="font-size:22px">📊 Level changes</h2><div class="mt">${touched.map(id=>levelRow(TP[id],sess.lv0[id])).join('')}</div></div>`}
+ ${misses.length?`<div class="panel mt"><h2 class="fd" style="font-size:22px">🔁 Replay your mistakes</h2>${misses.map(m=>`<div class="mistake">${TP[m.t].emoji} ${pretty(m.q.replace(/<[^>]+>/g,''))}<br>You: <b style="color:var(--bad)">${pretty(m.you)}</b> → Answer: <b style="color:var(--ok)">${pretty(m.ans)}</b>${m.why?`<br><span class="mut">${pretty(m.why)}</span>`:''}</div>`).join('')}</div>`:''}
+ <div class="center mt2 row" style="justify-content:center">${sess.newCards.length?`<button class="btn" onclick="revealCards()">Open new photocards 💳</button>`:''}<button class="btn ${sess.newCards.length?'ghost':''}" onclick="startSession('tour')">🌍 Next World Tour set</button><button class="btn ghost" onclick="goHome()">🏠 Home</button></div>`;
+ show('results');if(sess.newCards.length)setTimeout(revealCards,900)}
+function levelRow(t,before){const sk=S.skills[t.id],now=sk.lvl,diff=now-before;
+ return `<div class="topicrow"><div class="tname">${t.emoji} ${t.name}</div><div>${lvBar(t,now)}<div class="tnow" style="margin-top:22px">Now: ${t.skills[Math.floor(now)-1]}</div></div><div class="tstat">Lv ${now.toFixed(1)} <span style="color:${diff>0?'var(--ok)':diff<0?'var(--bad)':'var(--mut)'}">${diff>0?'▲':diff<0?'▼':'•'}${Math.abs(diff)>=.05?Math.abs(diff).toFixed(1):''}</span><small>${gradeOf(now)}</small></div></div>`}
+function lvBar(t,l){return `<div class="lvbar" style="--tc:${t.color}"><b style="width:${l*10}%"></b>${[[2.5,'Gr 5|6'],[4.5,'Gr 6|7'],[7.5,'Gr 7|8']].map(([v,lab])=>`<span class="mk" style="left:${v*10}%"></span><span class="mkl" style="left:${v*10}%">${lab}</span>`).join('')}</div>`}
+
+/* ----- progress ----- */
+function openProgress(){const ov=overall(),sorted=[...TOPICS].sort((a,b)=>S.skills[a.id].lvl-S.skills[b.id].lvl),h=S.history;
+ const acc=t=>{const s=S.skills[t.id];return s.att?Math.round(s.ok/s.att*100)+'%':'-'};
+ const spark=h.length>1?(()=>{const W=600,H=120,xs=i=>i/(h.length-1)*W,ys=l=>H-(l-1)/9*H;const pts=h.map((p,i)=>`${xs(i)},${ys(p.l)}`).join(' ');
+  return `<svg viewBox="-10 -10 ${W+20} ${H+20}" style="width:100%;height:140px"><defs><linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="var(--a)"/><stop offset="1" stop-color="var(--gold)"/></linearGradient></defs>${[4.5,7.5].map(v=>`<line x1="0" x2="${W}" y1="${ys(v)}" y2="${ys(v)}" stroke="rgba(255,255,255,.18)" stroke-dasharray="6 6"/><text x="${W}" y="${ys(v)-5}" fill="rgba(255,255,255,.5)" font-size="12" text-anchor="end" font-weight="800">${v===4.5?'Grade 7 starts':'Grade 8 starts'}</text>`).join('')}<polyline points="${pts}" fill="none" stroke="url(#lg)" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>${h.map((p,i)=>`<circle cx="${xs(i)}" cy="${ys(p.l)}" r="5" fill="#fff"/>`).join('')}</svg>`})():`<p class="mut" style="font-weight:700">Finish a couple more sets to see your growth chart here 📈</p>`;
+ $('#s-progress').innerHTML=`
+ <div class="hero" style="padding-bottom:0"><h1 class="grad" style="font-size:clamp(30px,5vw,46px)">My Progress</h1>
+  <p class="mut">${S.placed?`Overall, ${esc(S.name)} is working at about a <b style="color:#fff">${gradeOf(ov)}</b> level (Lv ${ov.toFixed(1)} of 10).`:'Do the Audition first to find your level!'}</p></div>
+ <div class="panel mt"><h2 class="fd" style="font-size:22px">📈 Level over time</h2>${spark}</div>
+ <div class="panel mt"><h2 class="fd" style="font-size:22px">🎚️ Skill levels</h2><p class="mut" style="font-weight:700;font-size:14px">Lv 1-2 ≈ Grade 5 · Lv 3-4 ≈ Grade 6 · Lv 5-7 ≈ Grade 7 · Lv 8-10 ≈ Grade 8</p>
+  <div class="mt">${TOPICS.map(t=>{const l=S.skills[t.id].lvl,f=Math.floor(l);return `<div class="topicrow"><div class="tname">${t.emoji} ${t.name}</div><div>${lvBar(t,l)}<div class="tnow" style="margin-top:22px">Now: <b style="color:#fff">${t.skills[f-1]}</b>${f<10?` → Next: ${t.skills[f]}`:' · Maxed! 👑'}</div></div><div class="tstat">Lv ${l.toFixed(1)}<small>${gradeOf(l)} · ${acc(t)} correct</small></div></div>`}).join('')}</div></div>
+ <div class="grid2 mt">
+  <div class="panel"><h2 class="fd" style="font-size:22px">🗺️ Path forward</h2>
+   ${sorted.slice(0,3).map((t,i)=>{const l=S.skills[t.id].lvl,f=Math.floor(l);return `<div class="pathstep"><div class="num">${i+1}</div><div><b>${t.emoji} ${t.name}</b><div class="mut" style="font-weight:700;font-size:14px">${l<4.5?`Build up to grade 7: master "${t.skills[f-1]}" next.`:l<7.5?`On track for grade 7. Next skill: "${t.skills[Math.min(9,f)]}".`:`Ready for grade 8 work: "${t.skills[Math.min(9,f)]}".`}</div><div class="row" style="gap:8px;margin-top:8px"><button class="btn small" onclick="startSession('practice','${t.id}')">Practice ${t.name} ▶</button>${(()=>{const ls=lessonFor(t.id,Math.round(l));return ls?`<button class="btn small ghost" onclick="playVideo('${ls.id}')">🎬 Watch lesson</button>`:''})()}</div></div></div>`}).join('')}
+  </div>
+  <div class="panel"><h2 class="fd" style="font-size:22px">🔍 Recent mistakes</h2>
+   ${S.mistakes.length?S.mistakes.slice(0,6).map(m=>`<div class="mistake">${TP[m.t]?.emoji||''} <b>${TP[m.t]?.name||''}</b> · picked ${pretty(m.you)}, answer ${pretty(m.ans)}${m.why?`<br><span class="mut">${pretty(m.why)}</span>`:''}</div>`).join(''):'<p class="mut" style="font-weight:700">No mistakes yet, flawless! ✨</p>'}
+  </div>
+ </div>
+ <div class="center mt2"><button class="btn ghost" onclick="goHome()">🏠 Home</button></div>`;
+ show('progress')}
+
+/* ----- practice ----- */
+function openPractice(){$('#s-practice').innerHTML=`
+ <div class="hero" style="padding-bottom:0"><h1 class="grad" style="font-size:clamp(30px,5vw,46px)">Practice Room 🎧</h1><p class="mut">8 tracks on one topic. The difficulty adjusts after every answer.</p></div>
+ <div class="topics">${TOPICS.map(t=>{const l=S.skills[t.id].lvl;return `<button class="tbtn" style="--tc:${t.color}" onclick="startSession('practice','${t.id}')"><div class="em">${t.emoji}</div><h4>${t.name}</h4><small>Lv ${l.toFixed(1)} · ${gradeOf(l)}</small></button>`}).join('')}</div>
+ <div class="center mt2"><button class="btn ghost" onclick="goHome()">🏠 Home</button></div>`;show('practice')}
+
+/* ----- photocards ----- */
+const CARD_EM=['🎤','💜','🌟','🎧','💿','🪩','🎀','🦋','🔥','🌈','🍓','🐰','🌙','💎','🎸','🌸'];
+const CARD_T=['World Tour','Encore Night','Studio Session','Fan Meet','Music Video','Comeback Stage','Rehearsal','Award Show','Airport Fashion','Dance Practice','Live Stream','Album Jacket'];
+function makeCard(){const x=Math.random(),rar=x<.06?'legend':x<.32?'rare':'common';return{star:ST(),em:P(CARD_EM),t:P(CARD_T),rar,h:R(0,359),d:Date.now()}}
+function cardHTML(c){return `<div class="pc ${c.rar}" style="--pg:linear-gradient(160deg,hsl(${c.h} 85% 62%),hsl(${(c.h+60)%360} 80% 45%) 60%,hsl(${(c.h+140)%360} 75% 30%))"><span class="rar">${c.rar==='legend'?'👑 LEGEND':c.rar==='rare'?'✨ RARE':'COMMON'}</span><div class="pe">${c.em}</div><div><div class="pn">${esc(c.star)}</div><div class="pt">${c.t}</div></div></div>`}
+function openCards(){const left=Math.max(0,S.nextCard-S.xp);$('#s-cards').innerHTML=`
+ <div class="hero" style="padding-bottom:0"><h1 class="grad" style="font-size:clamp(30px,5vw,46px)">My Photocards 💳</h1><p class="mut">Earn a new card every 60 XP. Collect rare ✨ and legendary 👑 ones!</p></div>
+ <div class="panel mt"><div style="display:flex;justify-content:space-between;font-weight:800"><span>Next card</span><span class="mut">${left} XP to go</span></div><div class="bar" style="margin-top:8px"><b style="width:${(60-left)/60*100}%"></b></div></div>
+ <div class="cards">${S.cards.slice().reverse().map(cardHTML).join('')}${Array.from({length:Math.max(2,6-S.cards.length)},()=>`<div class="pc locked">🔒<br>Keep playing!</div>`).join('')}</div>
+ <div class="center mt2"><button class="btn ghost" onclick="goHome()">🏠 Home</button></div>`;show('cards')}
+let revealQ=[];
+function revealCards(){if(!sess||!sess.newCards.length)return;revealQ=sess.newCards.splice(0);showNextCard()}
+function showNextCard(){const c=revealQ.shift();if(!c){$('#modalRoot').innerHTML='';return}sfx('card');confetti(c.rar==='common'?80:200);
+ $('#modalRoot').innerHTML=`<div class="modal" onclick="if(event.target===this)showNextCard()"><div class="panel center"><h2 class="fd grad" style="font-size:30px">${c.rar==='legend'?'👑 LEGENDARY PULL!':c.rar==='rare'?'✨ RARE PULL!':'New photocard!'}</h2><div class="reveal">${cardHTML(c)}</div><button class="btn" onclick="showNextCard()">${revealQ.length?'Next card ▶':'Add to collection 💜'}</button></div></div>`}
+
+/* ----- video lounge ----- */
+function openVideos(){$('#s-videos').innerHTML=`
+ <div class="hero" style="padding-bottom:0"><h1 class="grad" style="font-size:clamp(30px,5vw,46px)">VIP Video Lounge 🎬</h1><p class="mut">Score 70% or more on a World Tour or Practice set to unlock the next official music video.</p></div>
+ <div class="vids">${MUSIC.map(m=>{const on=S.videos.includes(m.id);return `<div class="vcard ${on?'':'locked'}"><div class="vthumb" style="background-image:url(${thumb(m.id)})" ${on?`onclick="playVideo('${m.id}')"`:''}></div><div class="vi">${on?esc(m.t):'Locked'}<small>${esc(m.a)}</small></div></div>`}).join('')}</div>
+ <div class="center mt2"><button class="btn ghost" onclick="goHome()">🏠 Home</button></div>`;show('videos')}
+
+
+/* ----- parent report ----- */
+let rrDays=30;
+function lvAt(h,id){return h&&h.lv&&h.lv[id]!=null?h.lv[id]:null}
+function baseline(from){const H=S.history.filter(h=>h.lv);const before=H.filter(h=>h.d<from);return before.length?before[before.length-1]:H.find(h=>h.d>=from)||null}
+const pctS=(a,b)=>b?Math.round(a/b*100)+'%':'-';
+const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0;
+const dk=d=>{const x=new Date(d);return x.getFullYear()+'-'+(x.getMonth()+1)+'-'+x.getDate()};
+const fmtD=d=>new Date(d).toLocaleDateString(undefined,{month:'short',day:'numeric'});
+function reportData(days){
+ const now=Date.now(),from=days?now-days*864e5:0,log=S.log.filter(e=>e.d>=from),N=log.length,OK=log.filter(e=>e.ok).length;
+ const secs=log.reduce((a,e)=>a+(e.sec||0),0),active=new Set(log.map(e=>dk(e.d))).size;
+ const sets=S.history.filter(h=>h.d>=from&&h.m).length,base=baseline(from),lvNow=overall(),lvStart=base?base.l:null;
+ const half=Math.floor(N/2),A=log.slice(0,half),B=log.slice(half);
+ const acc=a=>a.length?a.filter(e=>e.ok).length/a.length:null,dif=a=>a.length?avg(a.map(e=>e.L)):null,hint=a=>a.length?a.filter(e=>e.h).length/a.length:null;
+ const rem=log.filter(e=>e.r),fo=S.focus,fl=log.filter(e=>e.t===fo),fA=fl.slice(0,fl.length>>1),fB=fl.slice(fl.length>>1);
+ const fStart=lvAt(base,fo),fNow=S.skills[fo].lvl,watched=S.watched.filter(w=>w.d>=from).length;
+ const topics=TOPICS.map(t=>{const l=log.filter(e=>e.t===t.id),b=lvAt(base,t.id),now=S.skills[t.id].lvl;return{t,n:l.length,ok:l.filter(e=>e.ok).length,h:l.filter(e=>e.h).length,now,chg:b==null?null:now-b}});
+ return{days,from,log,N,OK,secs,active,sets,base,lvNow,lvStart,acc1:acc(A),acc2:acc(B),dif1:dif(A),dif2:dif(B),hint1:hint(A),hint2:hint(B),rem:rem.length,remOk:rem.filter(e=>e.ok).length,
+  fo,fl,fStart,fNow,fAcc1:acc(fA),fAcc2:acc(fB),fDif1:dif(fA),fDif2:dif(fB),watched,topics,last:S.log.length?S.log[S.log.length-1].d:null}}
+function verdictOf(r){
+ if(r.N<15)return{c:'none',h:'Not enough practice yet to tell',p:`Maya answered ${r.N} question${r.N===1?'':'s'} in this period. After about 3 or 4 sets (around 30 questions) this report can show a real trend.`};
+ const dl=r.lvStart==null?0:r.lvNow-r.lvStart,dd=(r.dif2||0)-(r.dif1||0),da=(r.acc2||0)-(r.acc1||0);
+ const lvTxt=r.lvStart==null?'':`Her overall level went from <b>${r.lvStart.toFixed(1)}</b> to <b>${r.lvNow.toFixed(1)}</b> (${gradeOf(r.lvStart)} → ${gradeOf(r.lvNow)}). `;
+ const dTxt=`The questions she answers went from about level ${r.dif1.toFixed(1)} to ${r.dif2.toFixed(1)}, and she got ${Math.round(r.acc1*100)}% then ${Math.round(r.acc2*100)}% right.`;
+ if(dl>=.3||(dd>=.3&&da>-.1))return{c:'up',h:'Yes, Maya is getting better 📈',p:lvTxt+dTxt};
+ if(dl<=-.3||(dd<=-.3&&da<.05))return{c:'down',h:'Her level dipped a little',p:lvTxt+dTxt+` A dip is common when new material shows up. Look at the mistakes below to see what is tripping her up.`};
+ return{c:'flat',h:'Holding steady',p:lvTxt+dTxt+` She is consolidating. More regular practice (short sets, most days) is what moves the level up.`}}
+function focusVerdict(r){const T=TP[r.fo],n=r.fl.length;
+ if(n<6)return `She has only answered ${n} ${T.name} question${n===1?'':'s'} in this period, not enough to judge yet.`;
+ const d=r.fStart==null?null:r.fNow-r.fStart;
+ return `${n} questions, ${pctS(r.fl.filter(e=>e.ok).length,n)} right. `+(d==null?'':d>=.3?`Her level here rose from ${r.fStart.toFixed(1)} to ${r.fNow.toFixed(1)}, so she <b>understands more than before</b>. `:d<=-.3?`Her level here dropped from ${r.fStart.toFixed(1)} to ${r.fNow.toFixed(1)}, so this unit still needs work. `:`Her level here is steady at about ${r.fNow.toFixed(1)}. `)+
+  (r.fAcc1!=null&&r.fl.length>=10?`Accuracy moved from ${Math.round(r.fAcc1*100)}% to ${Math.round(r.fAcc2*100)}% at question levels ${r.fDif1.toFixed(1)} → ${r.fDif2.toFixed(1)}.`:'')}
+function reportText(r){const v=verdictOf(r),T=TP[r.fo],strip=x=>String(x).replace(/<[^>]+>/g,'');
+ return `M&M Maya's Math: progress report (${r.days?`last ${r.days} days`:'all time'}, ${new Date().toLocaleDateString()})\n\n`+
+ `${strip(v.h)}\n${strip(v.p)}\n\n`+
+ `Usage: ${r.active} active day${r.active===1?'':'s'}, ${r.sets} set${r.sets===1?'':'s'}, ${r.N} questions, ${Math.round(r.secs/60)} minutes. ${pctS(r.OK,r.N)} correct.\n`+
+ `Overall level: ${r.lvNow.toFixed(1)} of 10 (${gradeOf(r.lvNow)}).\n\n`+
+ `Class focus, ${T.name}: level ${r.fNow.toFixed(1)} (${gradeOf(r.fNow)}). Working on: ${T.skills[Math.floor(r.fNow)-1]}.\n${strip(focusVerdict(r))}\n\n`+
+ `Learning from mistakes: after an explanation she got the follow-up right ${r.remOk} of ${r.rem} times.\n\n`+
+ `By topic:\n`+r.topics.map(x=>`- ${x.t.name}: Lv ${x.now.toFixed(1)} (${gradeOf(x.now)})${x.chg!=null&&Math.abs(x.chg)>=.05?`, ${x.chg>0?'+':''}${x.chg.toFixed(1)}`:''}, ${x.n} questions, ${pctS(x.ok,x.n)} right`).join('\n')}
+function shareReport(){const t=reportText(reportData(rrDays));
+ if(navigator.share)navigator.share({title:"Maya's math report",text:t}).catch(()=>{});
+ else if(navigator.clipboard)navigator.clipboard.writeText(t).then(()=>toast('📋 Report copied. Paste it into a text or email.'),()=>toast('Could not copy'));}
+function emailReport(){location.href='mailto:?subject='+encodeURIComponent("Maya's math report")+'&body='+encodeURIComponent(reportText(reportData(rrDays)))}
+function openReport(days){if(days!==undefined)rrDays=days;const r=reportData(rrDays),v=verdictOf(r),T=TP[r.fo],fl=Math.floor(r.fNow);
+ const now=Date.now(),perDay={};S.log.forEach(e=>{const k=dk(e.d);perDay[k]=(perDay[k]||0)+(e.sec||0)});
+ const cal=Array.from({length:28},(_,i)=>{const d=now-(27-i)*864e5,m=Math.round((perDay[dk(d)]||0)/60);return `<i title="${fmtD(d)}: ${m} min" onclick="toast('${fmtD(d)}: ${m} min')" style="background:${m?`color-mix(in srgb,var(--ok) ${Math.min(100,25+m*4)}%,transparent)`:'rgba(255,255,255,.06)'}">${new Date(d).getDate()}</i>`}).join('');
+ const H=S.history.filter(h=>h.lv&&h.d>=r.from),chart=H.length>1?(()=>{const W=600,Hh=150,xs=i=>i/(H.length-1)*W,ys=l=>Hh-(l-1)/9*Hh,line=k=>H.map((h,i)=>`${xs(i)},${ys(k(h))}`).join(' ');
+  return `<svg viewBox="-10 -10 ${W+20} ${Hh+30}" style="width:100%;height:180px">${[[4.5,'Grade 7 starts'],[7.5,'Grade 8 starts']].map(([v,lab])=>`<line x1="0" x2="${W}" y1="${ys(v)}" y2="${ys(v)}" stroke="rgba(255,255,255,.18)" stroke-dasharray="6 6"/><text x="${W}" y="${ys(v)-5}" fill="rgba(255,255,255,.5)" font-size="12" text-anchor="end" font-weight="800">${lab}</text>`).join('')}
+   <polyline points="${line(h=>h.l)}" fill="none" stroke="var(--gold)" stroke-width="3" stroke-linejoin="round"/><polyline points="${line(h=>h.lv[r.fo]??h.l)}" fill="none" stroke="${T.color}" stroke-width="4" stroke-linejoin="round"/>
+   <text x="0" y="${Hh+22}" fill="rgba(255,255,255,.6)" font-size="12" font-weight="800">${fmtD(H[0].d)}</text><text x="${W}" y="${Hh+22}" fill="rgba(255,255,255,.6)" font-size="12" font-weight="800" text-anchor="end">${fmtD(H[H.length-1].d)}</text></svg>
+   <div class="row" style="gap:16px;font-weight:800;font-size:13px"><span><span style="color:${T.color}">━━</span> ${T.name}</span><span><span style="color:var(--gold)">━━</span> Overall</span></div>`})():`<p class="mut" style="font-weight:700">The chart appears after 2 or more sets in this period.</p>`;
+ const lvAcc={};S.log.filter(e=>e.t===r.fo).forEach(e=>{const k=T.skills[e.L-1];lvAcc[k]=lvAcc[k]||[0,0];lvAcc[k][0]++;lvAcc[k][1]+=e.ok});
+ const seen=new Set(),skills=T.skills.map((n,i)=>({n,i:i+1})).filter(x=>!seen.has(x.n)&&seen.add(x.n)).map(x=>{const last=T.skills.lastIndexOf(x.n)+1,st=last<fl?'done':x.i<=fl?'now':'next';return{...x,st}});
+ const fm=S.mistakes.filter(m=>m.t===r.fo&&m.d>=r.from).slice(0,4),om=S.mistakes.filter(m=>m.t!==r.fo&&m.d>=r.from).slice(0,3),ls=lessonFor(r.fo,Math.round(r.fNow));
+ $('#s-report').innerHTML=`
+ <div class="hero" style="padding-bottom:0"><h1 class="grad" style="font-size:clamp(30px,5vw,46px)">Parent Report 👪</h1>
+  <p class="mut">How Maya is doing in M&M${r.last?` · last practiced ${fmtD(r.last)}`:''}</p>
+  <div class="row mt" style="justify-content:center;gap:10px"><div class="seg">${[[7,'7 days'],[30,'30 days'],[0,'All time']].map(([d,l])=>`<button class="${rrDays===d?'on':''}" onclick="openReport(${d})">${l}</button>`).join('')}</div></div></div>
+ <div class="verdict ${v.c} mt"><div class="fd" style="font-size:22px;margin-bottom:4px">${v.h}</div>${v.p}</div>
+ <div class="rgrid mt">
+  <div class="rstat"><div class="n">${r.active}</div><div class="l">Days active</div></div>
+  <div class="rstat"><div class="n">${Math.round(r.secs/60)}</div><div class="l">Minutes</div></div>
+  <div class="rstat"><div class="n">${r.N}</div><div class="l">Questions</div></div>
+  <div class="rstat"><div class="n">${pctS(r.OK,r.N)}</div><div class="l">Correct</div></div>
+ </div>
+ <div class="grid2 mt">
+  <div class="panel"><h2 class="fd" style="font-size:22px">📅 Last 4 weeks</h2><p class="mut" style="font-weight:700;font-size:13px;margin:4px 0 10px">Greener = more minutes that day. Tap a day to see minutes.</p><div class="cal">${cal}</div>
+   <p class="mut mt" style="font-weight:700;font-size:14px">🔥 Current streak: <b style="color:#fff">${S.days} day${S.days===1?'':'s'}</b> · ${r.sets} set${r.sets===1?'':'s'} in this period</p></div>
+  <div class="panel"><h2 class="fd" style="font-size:22px">🧠 Does she understand more?</h2>
+   <div class="sig"><span class="e">🔁</span><div><b>Learning from mistakes:</b> after a wrong answer she reads the explanation, then gets a similar question. She got that follow-up right <b>${r.remOk} of ${r.rem}</b> times${r.rem?` (${pctS(r.remOk,r.rem)})`:''}. ${r.rem>=4?(r.remOk/r.rem>=.6?'That means the explanations are sinking in.':'The explanations are not always sticking yet; the video lessons can help.'):''}</div></div>
+   <div class="sig"><span class="e">💡</span><div><b>Hints:</b> ${r.hint1==null?'no data yet.':`she used a hint on ${Math.round(r.hint1*100)}% of questions early in this period and ${Math.round(r.hint2*100)}% later. ${r.hint2<r.hint1-.03?'Fewer hints means more independence.':r.hint2>r.hint1+.03?'More hints lately, often because the questions got harder.':''}`}</div></div>
+   <div class="sig"><span class="e">📶</span><div><b>Harder questions:</b> ${r.dif1==null?'no data yet.':`the app moved her from about level ${r.dif1.toFixed(1)} questions to level ${r.dif2.toFixed(1)}. It only does that when she keeps getting them right.`}</div></div>
+   <div class="sig" style="border:0"><span class="e">🎬</span><div><b>Video lessons watched:</b> ${r.watched}</div></div></div>
+ </div>
+ <div class="panel mt"><div class="row" style="justify-content:space-between;gap:10px"><h2 class="fd" style="font-size:22px">${T.emoji} Class focus: ${T.name}</h2>
+   <label class="mut" style="font-weight:800;font-size:13px">Change focus <select class="sel" onchange="S.focus=this.value;save();openReport()">${TOPICS.map(t=>`<option value="${t.id}" ${t.id===r.fo?'selected':''}>${t.name}</option>`).join('')}</select></label></div>
+  <p class="mut" style="font-weight:700;font-size:14px;margin-top:4px">Set this to what she is learning in class. About a third of her mixed practice comes from this topic.</p>
+  <div class="mt" style="font-size:17px;font-weight:700;line-height:1.55">Level <b style="color:#fff">${r.fNow.toFixed(1)}</b> of 10 · <b style="color:#fff">${gradeOf(r.fNow)}</b>. ${focusVerdict(r)}</div>
+  <div class="mt">${lvBar(T,r.fNow)}</div>
+  <div class="grid2 mt2"><div><h3 class="fd" style="font-size:18px;margin-bottom:6px">Skills in this unit</h3>${skills.map(x=>{const a=lvAcc[x.n];return `<div class="skl">${x.st==='done'?'✅':x.st==='now'?'🎯':'⬜'} <span>${x.n}</span><small>${a?`${a[1]}/${a[0]} right`:x.st==='next'?'coming up':''}</small></div>`}).join('')}</div>
+   <div><h3 class="fd" style="font-size:18px;margin-bottom:6px">Mistakes in this unit</h3>${fm.length?fm.map(m=>`<div class="mistake">${pretty(esc(m.q))}<br>Picked <b style="color:var(--bad)">${pretty(m.you)}</b>, answer <b style="color:var(--ok)">${pretty(m.ans)}</b>${m.why?`<br><span class="mut">${pretty(m.why)}</span>`:''}</div>`).join(''):'<p class="mut" style="font-weight:700">No mistakes in this unit during this period. ✨</p>'}
+   ${ls?`<button class="btn small ghost mt" onclick="playVideo('${ls.id}')">🎬 Lesson for her level: ${ls.t}</button>`:''}</div></div>
+ </div>
+ <div class="panel mt"><h2 class="fd" style="font-size:22px">📈 Level over time</h2>${chart}</div>
+ <div class="panel mt"><h2 class="fd" style="font-size:22px">🎚️ All topics</h2>
+  <div style="overflow-x:auto"><table class="rtable"><tr><th>Topic</th><th>Level now</th><th>Change</th><th>Questions</th><th>Correct</th><th>Hints</th></tr>
+  ${[...r.topics].sort((a,b)=>(b.t.id===r.fo)-(a.t.id===r.fo)||a.now-b.now).map(x=>`<tr class="${x.t.id===r.fo?'foc':''}"><td>${x.t.emoji} ${x.t.name}</td><td>${x.now.toFixed(1)} <span class="mut">${gradeOf(x.now)}</span></td><td style="color:${x.chg>0.04?'var(--ok)':x.chg<-0.04?'var(--bad)':'var(--mut)'}">${x.chg==null||Math.abs(x.chg)<.05?'•':(x.chg>0?'▲ ':'▼ ')+Math.abs(x.chg).toFixed(1)}</td><td>${x.n}</td><td>${pctS(x.ok,x.n)}</td><td>${pctS(x.h,x.n)}</td></tr>`).join('')}</table></div>
+  <p class="mut mt" style="font-weight:700;font-size:13px">Lv 1-2 ≈ Grade 5 · 3-4 ≈ Grade 6 · 5-7 ≈ Grade 7 · 8-10 ≈ Grade 8. Everyone starts at Lv 5 (7th grade) and the Audition adjusts from there.</p></div>
+ ${om.length?`<div class="panel mt"><h2 class="fd" style="font-size:22px">🔍 Other recent mistakes</h2>${om.map(m=>`<div class="mistake">${TP[m.t]?.emoji||''} <b>${TP[m.t]?.name||''}</b> · picked ${pretty(m.you)}, answer ${pretty(m.ans)}${m.why?`<br><span class="mut">${pretty(m.why)}</span>`:''}</div>`).join('')}</div>`:''}
+ <div class="panel mt"><h2 class="fd" style="font-size:20px">ℹ️ How to read this</h2><p class="mut" style="font-weight:700;line-height:1.6;margin-top:6px">The app keeps adjusting the difficulty so Maya gets roughly 2 out of 3 questions right. So "percent correct" stays fairly steady even while she improves. The <b style="color:#fff">level</b> and the <b style="color:#fff">difficulty of the questions she answers</b> are the real signs of progress. All of this is stored only on this device.</p></div>
+ <div class="center mt2 row" style="justify-content:center"><button class="btn" onclick="shareReport()">📤 Send report</button><button class="btn ghost" onclick="emailReport()">✉️ Email</button><button class="btn ghost" onclick="goHome()">🏠 Home</button></div>`;
+ show('report')}
+
+/* ----- settings ----- */
+function openSettings(){$('#modalRoot').innerHTML=`<div class="modal" onclick="if(event.target===this)this.remove()"><div class="panel">
+ <h2 class="fd" style="font-size:26px">⚙️ Settings</h2>
+ <div class="toggle"><span>👪 Parent report</span><button class="btn small" onclick="$('#modalRoot').innerHTML='';openReport()">Open</button></div>
+ <div class="toggle"><span>🔊 Sound effects</span><button class="btn small ${S.sound?'':'ghost'}" onclick="S.sound=!S.sound;save();openSettings()">${S.sound?'On':'Off'}</button></div>
+ <div class="toggle"><span>🎤 Change artists & lightstick</span><button class="btn small ghost" onclick="$('#modalRoot').innerHTML='';openOnboard()">Edit</button></div>
+ <div class="toggle"><span>🎯 Retake the Audition</span><button class="btn small ghost" onclick="$('#modalRoot').innerHTML='';startSession('audition')">Start</button></div>
+ <div class="toggle"><span>🗑️ Reset all progress</span><button class="btn small ghost" style="border-color:var(--bad)" onclick="if(confirm('Erase ALL progress, XP and photocards? This cannot be undone.')){localStorage.removeItem(KEY);location.reload()}">Reset</button></div>
+ <p class="mut" style="font-size:13px;font-weight:700;margin-top:10px">Progress is saved in this browser on this device.</p>
+ <div class="center mt"><button class="btn" onclick="$('#modalRoot').innerHTML=''">Done</button></div></div></div>`}
+
+/* ----- boot ----- */
+applyTheme();
+if(location.hash==='#parent')openReport();else if(!S.stars.length)openOnboard();else goHome();
+</script>
+</body>
+</html>
