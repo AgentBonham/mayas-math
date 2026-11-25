@@ -359,11 +359,11 @@ const med=l=>{const s=[...l].sort((a,b)=>a-b),m=s.length>>1;return s.length%2?s[
    Content: artists, contexts
    ========================================================= */
 const KPOP=['KATSEYE','BTS','BLACKPINK','Stray Kids','TWICE','NewJeans','SEVENTEEN','aespa','ENHYPEN','LE SSERAFIM','IVE','ATEEZ','TXT','ILLIT','BABYMONSTER','ROSÉ','Jungkook'];
-const POP=['Freya Skye','Harry Styles','Taylor Swift','Olivia Rodrigo','Sabrina Carpenter','Billie Eilish','Ariana Grande','Dua Lipa','Chappell Roan','Doja Cat','Selena Gomez','Tate McRae'];
+const POP=['Freya Skye','Harry Styles','Olivia Rodrigo','Sabrina Carpenter','Billie Eilish','Ariana Grande','Dua Lipa','Chappell Roan','Doja Cat','Selena Gomez','Tate McRae'];
 const STICKS={pink:['#ff4fa3','#a855f7'],purple:['#a855f7','#6366f1'],mint:['#2ee6b6','#38bdf8'],blue:['#38bdf8','#6366f1'],gold:['#fbbf24','#ff4fa3'],red:['#ff4d5e','#ff9d5c']};
 const CITIES=['Seoul','Tokyo','London','Paris','Los Angeles','New York','Sydney','Toronto','Bangkok','Mexico City','Chicago','Busan'];
 const city=()=>P(CITIES);
-const ST=()=>P(S.stars.length?S.stars:['Freya Skye','Harry Styles','Taylor Swift','KATSEYE']);
+const ST=()=>P(S.stars.length?S.stars:['Freya Skye','Harry Styles','KATSEYE']);
 const CHEERS=[s=>`${s} would put that answer on the setlist! 🎶`,s=>`That's a chart-topping answer! 📈`,s=>`Encore! Encore! 👏`,s=>`${s} just added you to the fan-cam 📸`,s=>`Flawless choreography, every step on beat 💃`,s=>`Certified platinum brain 💿`,s=>`The crowd is screaming your name! 🗣️💜`,s=>`Main-character energy ✨`,s=>`You ate that 🔥`,s=>`${s} wants you on their next world tour 🌍`];
 const OOPS=['Almost! Let\'s fix it together 💜','Plot twist! Here\'s what happened 🎬','No stress, even idols rehearse 🎧','Close! Let\'s replay that track 🔁'];
 
@@ -372,10 +372,10 @@ const OOPS=['Almost! Let\'s fix it together 💜','Plot twist! Here\'s what happ
    ========================================================= */
 const MUSIC=[
  {id:'pbHaLvebMdA',a:'Freya Skye',t:"Gold's Gone"},{id:'H5v3kku4y6Q',a:'Harry Styles',t:'As It Was'},
- {id:'nfWlot6h_JM',a:'Taylor Swift',t:'Shake It Off'},{id:'R2-yomhYAj4',a:'KATSEYE',t:'Gnarly'},
+ {id:'R2-yomhYAj4',a:'KATSEYE',t:'Gnarly'},
  {id:'4XawEYg_Q6E',a:'Freya Skye',t:'Walk Over'},{id:'E07s5ZYygMg',a:'Harry Styles',t:'Watermelon Sugar'},
- {id:'e-ORhEE9VVg',a:'Taylor Swift',t:'Blank Space'},{id:'CjnB56tSCQI',a:'KATSEYE',t:'Gabriela'},
- {id:'QWP9swKl8p4',a:'Freya Skye',t:"Can't Fake It"},{id:'b1kbLwvqugk',a:'Taylor Swift',t:'Anti-Hero'},
+ {id:'CjnB56tSCQI',a:'KATSEYE',t:'Gabriela'},
+ {id:'QWP9swKl8p4',a:'Freya Skye',t:"Can't Fake It"},
  {id:'YMywRjz5VEk',a:'Freya Skye',t:'Someone to Love'},{id:'Q8uMYJhK5BA',a:'Freya Skye',t:'Winter Dream'}];
 const V={neg:['NQSN00zL5gg','Adding and subtracting negative numbers'],mul:['d8lP5tR2R3Q','Multiplying and dividing negative numbers'],oo:['ClYdw4d4OmA','Introduction to order of operations'],ooe:['_jiI0AV8Vr4','Order of operations with exponents'],
  fadd:['52ZlXsFJULI','Adding and subtracting fractions'],fmul:['CTKMK1ZGLuk','Multiplying two fractions'],fdivu:['f3ySpxX9oeM','Understanding division of fractions'],fdiv:['m-pRnFIeoNA','Dividing fractions example'],
@@ -626,7 +626,7 @@ function gProp(L){const s=ST(),c=P(PCTX)(s),kTxt=k=>num(k);
    {v:a.toString()===ans.toString()?null:a.toString(),why:`That's the amount for ${b} hour, not for a whole hour.`}],
    steps:[`Rate per hour = amount ÷ time = ${a} ÷ ${b}.`,`Dividing by a fraction = multiply by its flip: ${a} × ${Bs[1]}/${Bs[0]} = <b>${ans}</b>.`,ans.v>1?`So that's ${num(r2(ans.v))} ${act[2]} every hour.`:`So that's less than one whole ${act[2].slice(0,-1)} every hour.`],
    hint:`Divide: ${a} ÷ ${b}. Remember keep, change, flip!`,tip:`Unit rate with fractions: still divide amount ÷ time. Keep, change, flip.`,fill:fracFill(ans)})}
- let k1=P([1.5,2.5,3.5,2,4,5]),k2=R(2,6);while(k2===k1)k2=R(2,6);const xs=[2,4,6],a1=P(['Freya Skye','Taylor Swift']),a2=P(['Harry Styles','KATSEYE']),diff=Math.abs(k1-k2),fast=k1>k2?a1:a2;
+ let k1=P([1.5,2.5,3.5,2,4,5]),k2=R(2,6);while(k2===k1)k2=R(2,6);const xs=[2,4,6],[a1,a2]=P([['Freya Skye','Harry Styles'],['KATSEYE','Harry Styles'],['Freya Skye','KATSEYE']]),diff=Math.abs(k1-k2),fast=k1>k2?a1:a2;
  return build({text:`Two fan clubs grow at steady rates (x = days, y = thousand new fans).<br>🎤 <b>${a1}</b>: y = ${num(k1)}x<br>🎤 <b>${a2}</b>:${ptab({x:'Days',y:'Fans (k)'},xs,xs.map(x=>k2*x))}How many MORE thousand fans per day does the faster club gain?`,short:`${a1}: y = ${num(k1)}x vs ${a2}: table ${pairs(xs,x=>k2*x)}. Difference per day?`,answer:num(diff),wrong:[
   {v:num(Math.abs(k1-k2*2)),why:`You compared with ${a2}'s value for 2 days (${k2*2}). Find their rate per 1 day first: ${k2*2} ÷ 2 = ${k2}.`},
   {v:num(Math.max(k1,k2)),why:`That's just the faster club's rate. The question asks how many MORE: subtract the two rates.`},
@@ -871,9 +871,9 @@ const rankOf=xp=>{let i=0;RANKS.forEach((r,j)=>{if(xp>=r[0])i=j});return{i,r:RAN
    State
    ========================================================= */
 const KEY='mmMayasMath.v1';
-function fresh(){return{name:'Maya',stars:['Freya Skye','Harry Styles','Taylor Swift','KATSEYE'],color:'pink',placed:false,skills:Object.fromEntries(TOPICS.map(t=>[t.id,{lvl:5,att:0,ok:0,recent:[]}])),xp:0,fans:0,best:0,cards:[],nextCard:60,mistakes:[],sound:true,days:0,lastDay:null,sessions:0,history:[],videos:[],log:[],watched:[],focus:'prop'}}
+function fresh(){return{name:'Maya',stars:['Freya Skye','Harry Styles','KATSEYE'],color:'pink',placed:false,skills:Object.fromEntries(TOPICS.map(t=>[t.id,{lvl:5,att:0,ok:0,recent:[]}])),xp:0,fans:0,best:0,cards:[],nextCard:60,mistakes:[],sound:true,days:0,lastDay:null,sessions:0,history:[],videos:[],log:[],watched:[],focus:'prop'}}
 let S;try{S=Object.assign(fresh(),JSON.parse(localStorage.getItem(KEY)||'null')||{})}catch(e){S=fresh()}
-if(!Array.isArray(S.videos))S.videos=[];if(!Array.isArray(S.log))S.log=[];if(!Array.isArray(S.watched))S.watched=[];if(!S.focus)S.focus='prop';
+if(!Array.isArray(S.videos))S.videos=[];if(!Array.isArray(S.log))S.log=[];S.stars=S.stars.filter(n=>n!=='Taylor Swift');S.videos=S.videos.filter(id=>!['nfWlot6h_JM','e-ORhEE9VVg','b1kbLwvqugk'].includes(id));S.cards=S.cards.filter(c=>c.star!=='Taylor Swift');if(!Array.isArray(S.watched))S.watched=[];if(!S.focus)S.focus='prop';
 TOPICS.forEach(t=>{if(!S.skills[t.id])S.skills[t.id]={lvl:5,att:0,ok:0,recent:[]}});
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 const overall=()=>TOPICS.reduce((a,t)=>a+S.skills[t.id].lvl,0)/TOPICS.length;
